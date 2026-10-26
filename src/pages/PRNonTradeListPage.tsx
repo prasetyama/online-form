@@ -213,6 +213,7 @@ export const PRNonTradeListPage: React.FC = () => {
                         <table className="w-full text-left text-sm text-slate-700">
                             <thead className="bg-slate-50 text-slate-600 font-semibold border-b border-slate-200 uppercase text-md tracking-wider">
                                 <tr>
+                                    <th className="py-3.5 px-4 text-md">No</th>
                                     <th className="py-3.5 px-4">Transaction ID</th>
                                     <th className="py-3.5 px-4">Tanggal</th>
                                     <th className="py-3.5 px-4">Requestor</th>
@@ -223,8 +224,9 @@ export const PRNonTradeListPage: React.FC = () => {
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-slate-100">
-                                {filteredItems.map((item) => (
+                                {filteredItems.map((item, index) => (
                                     <tr key={item.id} className="hover:bg-slate-50/70 transition-colors">
+                                        <td className="py-3.5 px-4 text-center text-md">{index + 1}</td>
                                         <td className="py-3.5 px-4">
                                             {item.transaction_id ? (
                                                 <button
