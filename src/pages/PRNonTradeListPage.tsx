@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
     Plus, FileText, Search, Edit3, Eye, Trash2, Loader2,
@@ -30,7 +30,11 @@ export const PRNonTradeListPage: React.FC = () => {
         }
     };
 
+    const initialFetchDone = useRef(false);
+
     useEffect(() => {
+        if (initialFetchDone.current) return;
+        initialFetchDone.current = true;
         loadData();
     }, []);
 
@@ -75,7 +79,7 @@ export const PRNonTradeListPage: React.FC = () => {
                             <h1 className="text-xl md:text-2xl font-bold text-slate-900 tracking-tight">
                                 Daftar Purchase Request (PR)
                             </h1>
-                            <p className="text-slate-500 text-xs md:text-sm mt-0.5">
+                            <p className="text-slate-500 text-sm md:text-sm mt-0.5">
                                 Kelola pengajuan PR Non-Trade & Trade terintegrasi Centralized Approval Engine
                             </p>
                         </div>
@@ -104,46 +108,43 @@ export const PRNonTradeListPage: React.FC = () => {
 
             {/* Metrics Quick Strip */}
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                <div 
+                <div
                     onClick={() => setStatusFilter('ALL')}
-                    className={`p-4 rounded-2xl border cursor-pointer transition-all ${
-                        statusFilter === 'ALL'
-                            ? 'bg-blue-50/70 border-blue-300 ring-2 ring-blue-500/20'
-                            : 'bg-white border-slate-200/80 hover:bg-slate-50/50'
-                    }`}
+                    className={`p-4 rounded-2xl border cursor-pointer transition-all ${statusFilter === 'ALL'
+                        ? 'bg-blue-50/70 border-blue-300 ring-2 ring-blue-500/20'
+                        : 'bg-white border-slate-200/80 hover:bg-slate-50/50'
+                        }`}
                 >
                     <div className="flex items-center justify-between">
-                        <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Total PR</span>
+                        <span className="text-sm font-semibold text-slate-500 uppercase tracking-wider">Total PR</span>
                         <FileText size={18} className="text-blue-600" />
                     </div>
                     <p className="text-2xl font-bold text-slate-900 mt-2">{items.length}</p>
                 </div>
 
-                <div 
+                <div
                     onClick={() => setStatusFilter('DRAFT')}
-                    className={`p-4 rounded-2xl border cursor-pointer transition-all ${
-                        statusFilter === 'DRAFT'
-                            ? 'bg-amber-50/70 border-amber-300 ring-2 ring-amber-500/20'
-                            : 'bg-white border-slate-200/80 hover:bg-slate-50/50'
-                    }`}
+                    className={`p-4 rounded-2xl border cursor-pointer transition-all ${statusFilter === 'DRAFT'
+                        ? 'bg-amber-50/70 border-amber-300 ring-2 ring-amber-500/20'
+                        : 'bg-white border-slate-200/80 hover:bg-slate-50/50'
+                        }`}
                 >
                     <div className="flex items-center justify-between">
-                        <span className="text-xs font-semibold text-amber-700 uppercase tracking-wider">Draft Tersimpan</span>
+                        <span className="text-sm font-semibold text-amber-700 uppercase tracking-wider">Draft Tersimpan</span>
                         <Clock size={18} className="text-amber-600" />
                     </div>
                     <p className="text-2xl font-bold text-amber-900 mt-2">{draftCount}</p>
                 </div>
 
-                <div 
+                <div
                     onClick={() => setStatusFilter('SUBMITTED')}
-                    className={`p-4 rounded-2xl border cursor-pointer transition-all ${
-                        statusFilter === 'SUBMITTED'
-                            ? 'bg-emerald-50/70 border-emerald-300 ring-2 ring-emerald-500/20'
-                            : 'bg-white border-slate-200/80 hover:bg-slate-50/50'
-                    }`}
+                    className={`p-4 rounded-2xl border cursor-pointer transition-all ${statusFilter === 'SUBMITTED'
+                        ? 'bg-emerald-50/70 border-emerald-300 ring-2 ring-emerald-500/20'
+                        : 'bg-white border-slate-200/80 hover:bg-slate-50/50'
+                        }`}
                 >
                     <div className="flex items-center justify-between">
-                        <span className="text-xs font-semibold text-emerald-700 uppercase tracking-wider">Submitted / On Process</span>
+                        <span className="text-sm font-semibold text-emerald-700 uppercase tracking-wider">Submitted / On Process</span>
                         <CheckCircle2 size={18} className="text-emerald-600" />
                     </div>
                     <p className="text-2xl font-bold text-emerald-900 mt-2">{submittedCount}</p>
@@ -169,18 +170,17 @@ export const PRNonTradeListPage: React.FC = () => {
                             <button
                                 key={st}
                                 onClick={() => setStatusFilter(st)}
-                                className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
-                                    statusFilter === st
-                                        ? 'bg-white text-slate-900 shadow-xs'
-                                        : 'text-slate-500 hover:text-slate-800'
-                                }`}
+                                className={`px-3 py-1.5 rounded-lg text-sm font-semibold transition-all cursor-pointer ${statusFilter === st
+                                    ? 'bg-white text-slate-900 shadow-xs'
+                                    : 'text-slate-500 hover:text-slate-800'
+                                    }`}
                             >
                                 {st === 'ALL' ? 'Semua' : st}
                             </button>
                         ))}
                     </div>
 
-                    <div className="text-xs text-slate-500 font-medium whitespace-nowrap pl-2">
+                    <div className="text-sm text-slate-500 font-medium whitespace-nowrap pl-2">
                         <span className="font-bold text-slate-800">{filteredItems.length}</span> baris
                     </div>
                 </div>
@@ -211,7 +211,7 @@ export const PRNonTradeListPage: React.FC = () => {
                 ) : (
                     <div className="overflow-x-auto">
                         <table className="w-full text-left text-sm text-slate-700">
-                            <thead className="bg-slate-50 text-slate-600 font-semibold border-b border-slate-200 uppercase text-[11px] tracking-wider">
+                            <thead className="bg-slate-50 text-slate-600 font-semibold border-b border-slate-200 uppercase text-md tracking-wider">
                                 <tr>
                                     <th className="py-3.5 px-4">Transaction ID</th>
                                     <th className="py-3.5 px-4">Tanggal</th>
@@ -234,19 +234,19 @@ export const PRNonTradeListPage: React.FC = () => {
                                                     {item.transaction_id}
                                                 </button>
                                             ) : (
-                                                <span className="text-amber-700 font-medium italic text-xs bg-amber-50 px-2 py-0.5 rounded-md border border-amber-200">
+                                                <span className="text-amber-700 font-medium italic text-sm bg-amber-50 px-2 py-0.5 rounded-md border border-amber-200">
                                                     Draft (Belum diset)
                                                 </span>
                                             )}
                                         </td>
-                                        <td className="py-3.5 px-4 text-slate-500 font-medium text-xs whitespace-nowrap">
+                                        <td className="py-3.5 px-4 text-slate-500 font-medium text-sm whitespace-nowrap">
                                             {item.transaction_date || '-'}
                                         </td>
                                         <td className="py-3.5 px-4">
                                             <div className="font-semibold text-slate-800 text-sm">
                                                 {item.requestor_name || '-'}
                                             </div>
-                                            <div className="text-xs text-slate-400 mt-0.5">
+                                            <div className="text-sm text-slate-400 mt-0.5">
                                                 {item.requester_department || item.requester_company}
                                             </div>
                                         </td>
@@ -255,26 +255,26 @@ export const PRNonTradeListPage: React.FC = () => {
                                         </td>
                                         <td className="py-3.5 px-4 text-center">
                                             {item.status === 'DRAFT' && (
-                                                <span className="px-2.5 py-1 rounded-full text-xs font-bold bg-amber-50 text-amber-800 border border-amber-200 inline-flex items-center gap-1">
+                                                <span className="px-2.5 py-1 rounded-full text-sm font-bold bg-amber-50 text-amber-800 border border-amber-200 inline-flex items-center gap-1">
                                                     <Clock size={12} />
                                                     DRAFT
                                                 </span>
                                             )}
                                             {item.status === 'SUBMITTED' && (
-                                                <span className="px-2.5 py-1 rounded-full text-xs font-bold bg-blue-50 text-blue-800 border border-blue-200 inline-flex items-center gap-1">
+                                                <span className="px-2.5 py-1 rounded-full text-sm font-bold bg-blue-50 text-blue-800 border border-blue-200 inline-flex items-center gap-1">
                                                     <CheckCircle2 size={12} />
                                                     SUBMITTED
                                                 </span>
                                             )}
                                             {item.status === 'CANCELLED' && (
-                                                <span className="px-2.5 py-1 rounded-full text-xs font-bold bg-slate-100 text-slate-600 border border-slate-200 inline-flex items-center gap-1">
+                                                <span className="px-2.5 py-1 rounded-full text-sm font-bold bg-slate-100 text-slate-600 border border-slate-200 inline-flex items-center gap-1">
                                                     <AlertCircle size={12} />
                                                     CANCELLED
                                                 </span>
                                             )}
                                         </td>
                                         <td className="py-3.5 px-4 text-center">
-                                            <span className="font-bold text-slate-800 bg-slate-100 px-2 py-0.5 rounded-md text-xs">
+                                            <span className="font-bold text-slate-800 bg-slate-100 px-2 py-0.5 rounded-md text-sm">
                                                 {item.items?.length || 0}
                                             </span>
                                         </td>

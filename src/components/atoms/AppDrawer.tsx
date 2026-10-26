@@ -103,7 +103,7 @@ export const AppDrawer = ({ modules: initialModules = [], currentModuleCode = 'P
 
                         <div className="p-3 max-h-80 overflow-y-auto">
                             {fetchedModules.length === 0 ? (
-                                <div className="px-4 py-6 text-center text-xs text-slate-400">
+                                <div className="px-4 py-6 text-center text-sm text-slate-400">
                                     Tidak ada modul aplikasi lain.
                                 </div>
                             ) : (
@@ -123,7 +123,7 @@ export const AppDrawer = ({ modules: initialModules = [], currentModuleCode = 'P
                                                 title={mod.name || mod.code}
                                             >
                                                 <div className="w-10 h-10 rounded-xl bg-slate-100 group-hover:bg-blue-100 group-hover:text-blue-600 flex items-center justify-center transition-colors text-slate-600">
-                                                    <LayoutGrid size={20} />
+                                                    <LayoutGrid size={42} />
                                                 </div>
                                                 <span className="text-[11px] font-medium text-slate-700 leading-tight line-clamp-2 w-full">
                                                     {mod.name || mod.code}
@@ -141,7 +141,7 @@ export const AppDrawer = ({ modules: initialModules = [], currentModuleCode = 'P
                                     href={ssoUrl}
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    className="text-xs text-blue-600 hover:text-blue-800 font-semibold flex items-center gap-1.5 transition-colors"
+                                    className="text-sm text-blue-600 hover:text-blue-800 font-semibold flex items-center gap-1.5 transition-colors"
                                 >
                                     SSO Dashboard
                                     <ExternalLink size={12} />

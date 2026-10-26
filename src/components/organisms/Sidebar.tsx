@@ -63,7 +63,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                     {isExpanded && (
                         <div className="ml-3 overflow-hidden">
                             <span className="text-base font-extrabold tracking-tight text-slate-900 block whitespace-nowrap">
-                                PR <span className="text-blue-600">PORTAL</span>
+                                Online <span className="text-blue-600">Form</span>
                             </span>
                             <span className="text-[10px] text-slate-400 font-medium block whitespace-nowrap">
                                 Non-Trade & Trade

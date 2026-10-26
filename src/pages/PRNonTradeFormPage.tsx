@@ -309,12 +309,12 @@ export const PRNonTradeFormPage: React.FC = () => {
                         <h2 className="text-base md:text-lg font-bold text-slate-900">
                             Pilih Jenis Formulir Purchase Request
                         </h2>
-                        <p className="text-xs md:text-sm text-slate-500">
+                        <p className="text-sm md:text-sm text-slate-500">
                             Satu halaman form dinamis untuk pengadaan Trade (Barang Dagang) dan Non-Trade (Operasional & Aset)
                         </p>
                     </div>
                     {id && (
-                        <span className="px-3 py-1 rounded-full text-xs font-semibold bg-amber-100 text-amber-800 border border-amber-200 w-fit">
+                        <span className="px-3 py-1 rounded-full text-sm font-semibold bg-amber-100 text-amber-800 border border-amber-200 w-fit">
                             Terkunci ke Non-Trade (Mengedit Draft #{id})
                         </span>
                     )}
@@ -350,9 +350,10 @@ export const PRNonTradeFormPage: React.FC = () => {
                     <button
                         type="button"
                         onClick={() => handleSwitchPrType('trade')}
-                        className={`p-4 md:p-5 rounded-2xl border text-left transition-all cursor-pointer relative flex items-start gap-4 ${prType === 'trade'
+                        disabled
+                        className={`p-4 md:p-5 rounded-2xl border text-left transition-all relative flex items-start gap-4 cursor-not-allowed ${prType === 'trade'
                             ? 'border-indigo-600 bg-gradient-to-br from-indigo-50/80 to-indigo-50/20 ring-2 ring-indigo-600/20 shadow-sm'
-                            : 'border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50/60 opacity-80'
+                            : 'border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50/60 opacity-80 cursor-not-allowed'
                             }`}
                     >
                         <div className='flex flex-row gap-4 items-center w-full'>
@@ -391,7 +392,7 @@ export const PRNonTradeFormPage: React.FC = () => {
                         <div className="p-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                             {/* Transaction ID */}
                             <div>
-                                <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1.5">
+                                <label className="block text-sm font-bold uppercase tracking-wider text-slate-500 mb-1.5">
                                     Transaction ID
                                 </label>
                                 <input
@@ -404,7 +405,7 @@ export const PRNonTradeFormPage: React.FC = () => {
 
                             {/* Transaction Date */}
                             <div>
-                                <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1.5">
+                                <label className="block text-sm font-bold uppercase tracking-wider text-slate-500 mb-1.5">
                                     Transaction Date
                                 </label>
                                 <div className="relative">
@@ -420,7 +421,7 @@ export const PRNonTradeFormPage: React.FC = () => {
 
                             {/* Requestor Name */}
                             <div>
-                                <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1.5">
+                                <label className="block text-sm font-bold uppercase tracking-wider text-slate-500 mb-1.5">
                                     Requestor Name
                                 </label>
                                 <div className="relative">
@@ -436,7 +437,7 @@ export const PRNonTradeFormPage: React.FC = () => {
 
                             {/* Requester Department */}
                             <div>
-                                <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1.5">
+                                <label className="block text-sm font-bold uppercase tracking-wider text-slate-500 mb-1.5">
                                     Requester Department
                                 </label>
                                 <div className="relative">
@@ -452,7 +453,7 @@ export const PRNonTradeFormPage: React.FC = () => {
 
                             {/* Requester Company */}
                             <div className="md:col-span-2 lg:col-span-2">
-                                <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1.5">
+                                <label className="block text-sm font-bold uppercase tracking-wider text-slate-500 mb-1.5">
                                     Requester Company
                                 </label>
                                 <div className="relative">
@@ -494,10 +495,11 @@ export const PRNonTradeFormPage: React.FC = () => {
                             </div>
                             <div>
                                 <label className="block text-sm font-semibold text-slate-700 mb-2">
-                                    CAR / TBR No
+                                    CAR / TBR No <span className="text-red-500">*</span>
                                 </label>
                                 <input
                                     type="text"
+                                    required
                                     placeholder="Masukkan CAR/TBR No..."
                                     value={carTbrNo}
                                     onChange={(e) => setCarTbrNo(e.target.value)}
@@ -581,7 +583,7 @@ export const PRNonTradeFormPage: React.FC = () => {
 
                                     {/* Asset Type Selector */}
                                     <div>
-                                        <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">
+                                        <label className="block text-sm font-bold text-slate-700 uppercase tracking-wider mb-2">
                                             Asset Type <span className="text-red-500">*</span>
                                         </label>
                                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-w-md">
@@ -647,7 +649,7 @@ export const PRNonTradeFormPage: React.FC = () => {
                                                     <button
                                                         type="button"
                                                         onClick={() => setModalType('asset')}
-                                                        className="px-3.5 py-2.5 bg-blue-600 text-white hover:bg-blue-700 border border-transparent rounded-xl transition-colors cursor-pointer shrink-0 font-medium text-xs flex items-center gap-1.5 shadow-xs"
+                                                        className="px-3.5 py-2.5 bg-blue-600 text-white hover:bg-blue-700 border border-transparent rounded-xl transition-colors cursor-pointer shrink-0 font-medium text-sm flex items-center gap-1.5 shadow-xs"
                                                         title="Cari Master Asset"
                                                     >
                                                         <Search size={16} />
@@ -675,7 +677,7 @@ export const PRNonTradeFormPage: React.FC = () => {
                                                     <button
                                                         type="button"
                                                         onClick={() => setModalType('wbs')}
-                                                        className="px-3.5 py-2.5 bg-blue-600 text-white hover:bg-blue-700 border border-transparent rounded-xl transition-colors cursor-pointer shrink-0 font-medium text-xs flex items-center gap-1.5 shadow-xs"
+                                                        className="px-3.5 py-2.5 bg-blue-600 text-white hover:bg-blue-700 border border-transparent rounded-xl transition-colors cursor-pointer shrink-0 font-medium text-sm flex items-center gap-1.5 shadow-xs"
                                                         title="Cari Master WBS"
                                                     >
                                                         <Search size={16} />
@@ -750,7 +752,7 @@ export const PRNonTradeFormPage: React.FC = () => {
                             <div className="flex items-center gap-2.5 text-slate-800 font-bold text-base">
                                 <Package size={20} className="text-blue-600" />
                                 <span>Detail Items</span>
-                                <span className="text-xs px-2.5 py-1 rounded-full bg-blue-100 text-blue-800 font-semibold">
+                                <span className="text-sm px-2.5 py-1 rounded-full bg-blue-100 text-blue-800 font-semibold">
                                     {items.length} item
                                 </span>
                             </div>
@@ -873,7 +875,7 @@ export const PRNonTradeFormPage: React.FC = () => {
                             {/* Items Table */}
                             <div className="overflow-x-auto border border-slate-200 rounded-xl">
                                 <table className="w-full text-left text-sm text-slate-700">
-                                    <thead className="bg-slate-100 text-slate-700 font-semibold border-b border-slate-200 uppercase text-xs tracking-wider">
+                                    <thead className="bg-slate-100 text-slate-700 font-semibold border-b border-slate-200 uppercase text-sm tracking-wider">
                                         <tr>
                                             <th className="py-3.5 px-4 w-12 text-center">#</th>
                                             <th className="py-3.5 px-4">Goods Code</th>
@@ -898,7 +900,7 @@ export const PRNonTradeFormPage: React.FC = () => {
                                                     <td className="py-3.5 px-4 font-mono font-bold text-blue-700 text-sm">{it.goods_code}</td>
                                                     <td className="py-3.5 px-4 font-medium text-slate-800 text-sm">{it.goods_name}</td>
                                                     <td className="py-3.5 px-4 text-center">
-                                                        <span className="px-2.5 py-1 rounded bg-slate-100 font-medium text-xs text-slate-700">
+                                                        <span className="px-2.5 py-1 rounded bg-slate-100 font-medium text-sm text-slate-700">
                                                             {it.unit}
                                                         </span>
                                                     </td>

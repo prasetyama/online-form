@@ -68,15 +68,14 @@ export const PRDetailPage: React.FC = () => {
                             <h1 className="text-xl md:text-2xl font-bold text-slate-900 tracking-tight">
                                 Detail Purchase Request
                             </h1>
-                            <span className={`px-2.5 py-0.5 rounded-full text-xs font-bold ${
-                                pr.status === 'SUBMITTED' ? 'bg-blue-100 text-blue-800' :
-                                pr.status === 'DRAFT' ? 'bg-amber-100 text-amber-800' :
-                                'bg-slate-100 text-slate-700'
-                            }`}>
+                            <span className={`px-2.5 py-0.5 rounded-full text-sm font-bold ${pr.status === 'SUBMITTED' ? 'bg-blue-100 text-blue-800' :
+                                    pr.status === 'DRAFT' ? 'bg-amber-100 text-amber-800' :
+                                        'bg-slate-100 text-slate-700'
+                                }`}>
                                 {pr.status || 'DRAFT'}
                             </span>
                         </div>
-                        <p className="text-xs text-slate-500 font-mono mt-0.5">
+                        <p className="text-sm text-slate-500 font-mono mt-0.5">
                             ID: {pr.transaction_id || `Draft #${pr.id}`}
                         </p>
                     </div>
@@ -122,23 +121,23 @@ export const PRDetailPage: React.FC = () => {
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
                     <div>
-                        <span className="text-xs font-semibold text-slate-400 block uppercase tracking-wider">Transaction ID</span>
+                        <span className="text-sm font-semibold text-slate-400 block uppercase tracking-wider">Transaction ID</span>
                         <p className="font-mono font-bold text-sm text-blue-700 mt-1">{pr.transaction_id || '-'}</p>
                     </div>
                     <div>
-                        <span className="text-xs font-semibold text-slate-400 block uppercase tracking-wider">Tanggal Pengajuan</span>
+                        <span className="text-sm font-semibold text-slate-400 block uppercase tracking-wider">Tanggal Pengajuan</span>
                         <p className="font-medium text-sm text-slate-800 mt-1">{pr.transaction_date || '-'}</p>
                     </div>
                     <div>
-                        <span className="text-xs font-semibold text-slate-400 block uppercase tracking-wider">Requestor Name</span>
+                        <span className="text-sm font-semibold text-slate-400 block uppercase tracking-wider">Requestor Name</span>
                         <p className="font-bold text-sm text-slate-800 mt-1">{pr.requestor_name || '-'}</p>
                     </div>
                     <div>
-                        <span className="text-xs font-semibold text-slate-400 block uppercase tracking-wider">Department</span>
+                        <span className="text-sm font-semibold text-slate-400 block uppercase tracking-wider">Department</span>
                         <p className="font-medium text-sm text-slate-800 mt-1">{pr.requester_department || '-'}</p>
                     </div>
                     <div>
-                        <span className="text-xs font-semibold text-slate-400 block uppercase tracking-wider">Company / Entity</span>
+                        <span className="text-sm font-semibold text-slate-400 block uppercase tracking-wider">Company / Entity</span>
                         <p className="font-medium text-sm text-slate-800 mt-1">{pr.requester_company || '-'}</p>
                     </div>
                 </div>
@@ -152,7 +151,7 @@ export const PRDetailPage: React.FC = () => {
                 </div>
                 <div className="space-y-4">
                     <div>
-                        <span className="text-xs font-semibold text-slate-400 block uppercase tracking-wider">Purpose</span>
+                        <span className="text-sm font-semibold text-slate-400 block uppercase tracking-wider">Purpose</span>
                         <p className="font-medium text-sm text-slate-800 mt-1 bg-slate-50 p-3 rounded-xl border border-slate-200">
                             {pr.purpose}
                         </p>
@@ -160,38 +159,38 @@ export const PRDetailPage: React.FC = () => {
 
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
                         <div>
-                            <span className="text-xs font-semibold text-slate-400 block uppercase tracking-wider">Goods/Service Type</span>
+                            <span className="text-sm font-semibold text-slate-400 block uppercase tracking-wider">Goods/Service Type</span>
                             <p className="font-semibold text-sm text-slate-800 mt-1 capitalize">{pr.goods_service_type}</p>
                         </div>
                         <div>
-                            <span className="text-xs font-semibold text-slate-400 block uppercase tracking-wider">Purchase Type</span>
+                            <span className="text-sm font-semibold text-slate-400 block uppercase tracking-wider">Purchase Type</span>
                             <p className="font-semibold text-sm text-slate-800 mt-1 capitalize">{pr.purchase_type}</p>
                         </div>
                         <div>
-                            <span className="text-xs font-semibold text-slate-400 block uppercase tracking-wider">CAR / TBR No</span>
+                            <span className="text-sm font-semibold text-slate-400 block uppercase tracking-wider">CAR / TBR No</span>
                             <p className="font-medium text-sm text-slate-800 mt-1">{pr.car_tbr_no || '-'}</p>
                         </div>
 
                         {pr.purchase_type === 'asset' && (
                             <>
                                 <div>
-                                    <span className="text-xs font-semibold text-slate-400 block uppercase tracking-wider">Asset Type</span>
+                                    <span className="text-sm font-semibold text-slate-400 block uppercase tracking-wider">Asset Type</span>
                                     <p className="font-semibold text-sm text-slate-800 mt-1 capitalize">{pr.asset_type}</p>
                                 </div>
                                 {pr.asset_type === 'non_wbs' && (
                                     <div>
-                                        <span className="text-xs font-semibold text-slate-400 block uppercase tracking-wider">Asset No</span>
+                                        <span className="text-sm font-semibold text-slate-400 block uppercase tracking-wider">Asset No</span>
                                         <p className="font-mono font-bold text-sm text-slate-800 mt-1">{pr.asset_no || '-'}</p>
                                     </div>
                                 )}
                                 {pr.asset_type === 'wbs' && (
                                     <div>
-                                        <span className="text-xs font-semibold text-slate-400 block uppercase tracking-wider">WBS No</span>
+                                        <span className="text-sm font-semibold text-slate-400 block uppercase tracking-wider">WBS No</span>
                                         <p className="font-mono font-bold text-sm text-slate-800 mt-1">{pr.wbs_no || '-'}</p>
                                     </div>
                                 )}
                                 <div>
-                                    <span className="text-xs font-semibold text-slate-400 block uppercase tracking-wider">Equipment Name</span>
+                                    <span className="text-sm font-semibold text-slate-400 block uppercase tracking-wider">Equipment Name</span>
                                     <p className="font-medium text-sm text-slate-800 mt-1">{pr.equipment_name || '-'}</p>
                                 </div>
                             </>
@@ -211,7 +210,7 @@ export const PRDetailPage: React.FC = () => {
 
                 <div className="overflow-x-auto border border-slate-200 rounded-xl">
                     <table className="w-full text-left text-sm text-slate-700">
-                        <thead className="bg-slate-50 text-slate-600 font-semibold border-b border-slate-200 uppercase text-xs">
+                        <thead className="bg-slate-50 text-slate-600 font-semibold border-b border-slate-200 uppercase text-sm">
                             <tr>
                                 <th className="py-3 px-4 w-12 text-center">#</th>
                                 <th className="py-3 px-4">Goods Code</th>
@@ -224,16 +223,16 @@ export const PRDetailPage: React.FC = () => {
                         <tbody className="divide-y divide-slate-100">
                             {pr.items?.map((it, idx) => (
                                 <tr key={idx} className="hover:bg-slate-50/70">
-                                    <td className="py-3 px-4 text-center font-mono text-xs text-slate-400">{idx + 1}</td>
+                                    <td className="py-3 px-4 text-center font-mono text-sm text-slate-400">{idx + 1}</td>
                                     <td className="py-3 px-4 font-mono font-bold text-blue-700">{it.goods_code}</td>
                                     <td className="py-3 px-4 font-medium text-slate-800">{it.goods_name}</td>
                                     <td className="py-3 px-4 text-center">
-                                        <span className="px-2 py-0.5 rounded bg-slate-100 text-xs font-medium">
+                                        <span className="px-2 py-0.5 rounded bg-slate-100 text-sm font-medium">
                                             {it.unit}
                                         </span>
                                     </td>
                                     <td className="py-3 px-4 text-right font-bold text-slate-800">{it.quantity}</td>
-                                    <td className="py-3 px-4 text-slate-500 text-xs">{it.remark || '-'}</td>
+                                    <td className="py-3 px-4 text-slate-500 text-sm">{it.remark || '-'}</td>
                                 </tr>
                             ))}
                         </tbody>
@@ -244,7 +243,7 @@ export const PRDetailPage: React.FC = () => {
             {/* Submission Remark */}
             {pr.submission_remark && (
                 <div className="bg-white rounded-2xl border border-slate-200/80 shadow-xs p-6 space-y-2">
-                    <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Submission Remark</span>
+                    <span className="text-sm font-semibold text-slate-400 uppercase tracking-wider">Submission Remark</span>
                     <p className="text-sm text-slate-800 font-medium whitespace-pre-wrap">{pr.submission_remark}</p>
                 </div>
             )}

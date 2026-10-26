@@ -26,7 +26,7 @@ export const Header: React.FC<HeaderProps> = ({ onMenuClick }) => {
                 )}
                 <div>
                     <h1 className="text-base font-bold text-slate-800 hidden sm:block">
-                        PR Management System
+                        Online Form
                     </h1>
                     <p className="text-xs text-slate-400 hidden sm:block">
                         Purchase Request Non-Trade & Trade
@@ -36,33 +36,11 @@ export const Header: React.FC<HeaderProps> = ({ onMenuClick }) => {
 
             {/* Right Section */}
             <div className="flex items-center gap-3">
-                {/* Link to Approval Hub */}
-                <a
-                    href={approvalUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="hidden md:flex items-center gap-1.5 text-xs font-semibold text-slate-600 hover:text-blue-600 px-3 py-1.5 rounded-xl border border-slate-200 hover:border-blue-200 hover:bg-blue-50/50 transition-all cursor-pointer"
-                    title="Buka Centralized Approval Hub di tab baru"
-                >
-                    <ShieldCheck size={15} className="text-blue-600" />
-                    <span>Approval Hub</span>
-                    <ExternalLink size={12} className="text-slate-400" />
-                </a>
 
                 {/* SSO App Drawer */}
                 <AppDrawer />
 
                 <div className="h-6 w-px bg-slate-200 hidden sm:block"></div>
-
-                {/* User Department Badge */}
-                {user?.department && (
-                    <div className="hidden lg:flex items-center gap-2 px-3 py-1 bg-slate-100 rounded-full border border-slate-200">
-                        <span className="text-xs font-semibold text-slate-700">
-                            {user.department}
-                        </span>
-                        <div className="h-2 w-2 rounded-full bg-emerald-500"></div>
-                    </div>
-                )}
 
                 {/* User Details & Logout */}
                 <div className="flex items-center gap-2.5 pl-1">
