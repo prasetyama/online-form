@@ -68,10 +68,14 @@ export const PRDetailPage: React.FC = () => {
                             <h1 className="text-xl md:text-2xl font-bold text-slate-900 tracking-tight">
                                 Detail Purchase Request
                             </h1>
-                            <span className={`px-2.5 py-0.5 rounded-full text-sm font-bold ${pr.status === 'SUBMITTED' ? 'bg-blue-100 text-blue-800' :
-                                    pr.status === 'DRAFT' ? 'bg-amber-100 text-amber-800' :
-                                        'bg-slate-100 text-slate-700'
-                                }`}>
+                            <span className={`px-2.5 py-0.5 rounded-full text-sm font-bold ${
+                                pr.status === 'APPROVED' ? 'bg-emerald-100 text-emerald-800 border border-emerald-200' :
+                                pr.status === 'REJECTED' ? 'bg-rose-100 text-rose-800 border border-rose-200' :
+                                pr.status === 'IN_PROGRESS' ? 'bg-indigo-100 text-indigo-800 border border-indigo-200' :
+                                pr.status === 'SUBMITTED' ? 'bg-blue-100 text-blue-800 border border-blue-200' :
+                                pr.status === 'DRAFT' ? 'bg-amber-100 text-amber-800 border border-amber-200' :
+                                    'bg-slate-100 text-slate-700 border border-slate-200'
+                            }`}>
                                 {pr.status || 'DRAFT'}
                             </span>
                         </div>

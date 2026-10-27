@@ -93,11 +93,11 @@ export const AppDrawer = ({ modules: initialModules = [], currentModuleCode = 'P
                         )}
                     >
                         <div className="px-5 pt-4 pb-3 border-b border-slate-100 flex items-center justify-between">
-                            <h3 className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">
-                                SSO Applications
+                            <h3 className="text-sm font-bold text-slate-400 uppercase tracking-wider">
+                                Modules
                             </h3>
-                            <span className="text-[10px] font-semibold text-blue-600 bg-blue-50 px-2 py-0.5 rounded-full">
-                                Portal PR
+                            <span className="text-xs font-semibold text-blue-600 bg-blue-50 px-2 py-0.5 rounded-full">
+                                Online Form
                             </span>
                         </div>
 
@@ -125,7 +125,7 @@ export const AppDrawer = ({ modules: initialModules = [], currentModuleCode = 'P
                                                 <div className="w-10 h-10 rounded-xl bg-slate-100 group-hover:bg-blue-100 group-hover:text-blue-600 flex items-center justify-center transition-colors text-slate-600">
                                                     <LayoutGrid size={42} />
                                                 </div>
-                                                <span className="text-[11px] font-medium text-slate-700 leading-tight line-clamp-2 w-full">
+                                                <span className="text-xs font-medium text-slate-700 leading-tight line-clamp-2 w-full">
                                                     {mod.name || mod.code}
                                                 </span>
                                             </button>

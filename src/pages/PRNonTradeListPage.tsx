@@ -60,11 +60,14 @@ export const PRNonTradeListPage: React.FC = () => {
         );
 
         if (statusFilter === 'ALL') return matchesQuery;
+        if (statusFilter === 'SUBMITTED') {
+            return matchesQuery && ['SUBMITTED', 'IN_PROGRESS', 'APPROVED', 'REJECTED'].includes(item.status || '');
+        }
         return matchesQuery && item.status === statusFilter;
     });
 
     const draftCount = items.filter(i => i.status === 'DRAFT').length;
-    const submittedCount = items.filter(i => i.status === 'SUBMITTED').length;
+    const submittedCount = items.filter(i => ['SUBMITTED', 'IN_PROGRESS', 'APPROVED', 'REJECTED'].includes(i.status || '')).length;
 
     return (
         <div className="max-w-7xl mx-auto space-y-6">
@@ -80,7 +83,7 @@ export const PRNonTradeListPage: React.FC = () => {
                                 Daftar Purchase Request (PR)
                             </h1>
                             <p className="text-slate-500 text-sm md:text-sm mt-0.5">
-                                Kelola pengajuan PR Non-Trade & Trade terintegrasi Centralized Approval Engine
+                                Kelola pengajuan PR Non-Trade & Trade terintegrasi Approval HUB
                             </p>
                         </div>
                     </div>
@@ -262,10 +265,28 @@ export const PRNonTradeListPage: React.FC = () => {
                                                     DRAFT
                                                 </span>
                                             )}
-                                            {item.status === 'SUBMITTED' && (
+                                            {(item.status === 'SUBMITTED' || item.status === 'PENDING') && (
                                                 <span className="px-2.5 py-1 rounded-full text-sm font-bold bg-blue-50 text-blue-800 border border-blue-200 inline-flex items-center gap-1">
                                                     <CheckCircle2 size={12} />
                                                     SUBMITTED
+                                                </span>
+                                            )}
+                                            {item.status === 'IN_PROGRESS' && (
+                                                <span className="px-2.5 py-1 rounded-full text-sm font-bold bg-indigo-50 text-indigo-800 border border-indigo-200 inline-flex items-center gap-1">
+                                                    <Clock size={12} />
+                                                    IN PROGRESS
+                                                </span>
+                                            )}
+                                            {item.status === 'APPROVED' && (
+                                                <span className="px-2.5 py-1 rounded-full text-sm font-bold bg-emerald-50 text-emerald-800 border border-emerald-200 inline-flex items-center gap-1">
+                                                    <CheckCircle2 size={12} />
+                                                    APPROVED
+                                                </span>
+                                            )}
+                                            {item.status === 'REJECTED' && (
+                                                <span className="px-2.5 py-1 rounded-full text-sm font-bold bg-rose-50 text-rose-800 border border-rose-200 inline-flex items-center gap-1">
+                                                    <AlertCircle size={12} />
+                                                    REJECTED
                                                 </span>
                                             )}
                                             {item.status === 'CANCELLED' && (
