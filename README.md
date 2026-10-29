@@ -7,7 +7,7 @@ Portal Web khusus untuk pengajuan dan pengelolaan **Purchase Request (PR)** Non-
 ## 🚀 Fitur Utama
 
 1. **Autentikasi Terpusat (Centralized SSO)**:
-   - Login otomatis melalui SSO (`http://localhost:5173` lokal / `https://account.ceresnl.com` produksi).
+   - Login otomatis melalui SSO.
    - Validasi hak akses modul `approval` via JWT Cookie `sso_token`.
    - Multi-tab synchronized logout menggunakan `BroadcastChannel` dan cookie heartbeat check.
    - App Drawer terintegrasi untuk beralih antar aplikasi ekosistem SSO.
@@ -43,24 +43,6 @@ Portal Web khusus untuk pengajuan dan pengelolaan **Purchase Request (PR)** Non-
 - **Animations**: Framer Motion
 - **HTTP Client**: Axios (dengan Request/Response Interceptors untuk Bearer SSO Token & Auto 401 Redirect)
 - **Routing**: React Router DOM v6
-
----
-
-## ⚙️ Konfigurasi Environment (`.env`)
-
-```env
-# Local Development
-VITE_SSO_URL="http://localhost:5173"
-VITE_BACKEND_URL="http://localhost:8080"
-VITE_SSO_BACKEND_URL="http://localhost:8000/api/v1"
-VITE_APPROVAL_URL="http://localhost:5175"
-
-# Server Production DE
-# VITE_SSO_URL="https://account.ceresnl.com"
-# VITE_BACKEND_URL="https://wf.ceresnl.com/api"
-# VITE_SSO_BACKEND_URL="https://account.ceresnl.com/api/v1"
-# VITE_APPROVAL_URL="https://wf.ceresnl.com"
-```
 
 ---
 
