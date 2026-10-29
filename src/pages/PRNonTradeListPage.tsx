@@ -283,6 +283,12 @@ export const PRNonTradeListPage: React.FC = () => {
                                                     APPROVED
                                                 </span>
                                             )}
+                                            {item.status === 'REVISED' && (
+                                                <span className="px-2.5 py-1 rounded-full text-sm font-bold bg-amber-50 text-amber-800 border border-amber-200 inline-flex items-center gap-1">
+                                                    <AlertCircle size={12} />
+                                                    REVISE
+                                                </span>
+                                            )}
                                             {item.status === 'REJECTED' && (
                                                 <span className="px-2.5 py-1 rounded-full text-sm font-bold bg-rose-50 text-rose-800 border border-rose-200 inline-flex items-center gap-1">
                                                     <AlertCircle size={12} />
@@ -312,12 +318,12 @@ export const PRNonTradeListPage: React.FC = () => {
                                                     <Eye size={17} />
                                                 </button>
 
-                                                {item.status === 'DRAFT' ? (
+                                                {item.status === 'DRAFT' || item.status === 'REVISE' || item.status === 'REVISED' ? (
                                                     <>
                                                         <button
                                                             onClick={() => navigate(`/${item.id}/edit`)}
                                                             className="p-1.5 text-amber-700 hover:bg-amber-50 rounded-lg transition-colors cursor-pointer"
-                                                            title="Edit Draft"
+                                                            title="Edit / Revisi Pengajuan"
                                                         >
                                                             <Edit3 size={17} />
                                                         </button>

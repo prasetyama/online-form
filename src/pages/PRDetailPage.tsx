@@ -86,15 +86,16 @@ export const PRDetailPage: React.FC = () => {
                 </div>
 
                 <div className="flex items-center gap-2.5">
-                    {pr.status === 'DRAFT' ? (
+                    {pr.status === 'DRAFT' || pr.status === 'REVISE' || pr.status === 'REVISED' ? (
                         <button
                             onClick={() => navigate(`/${pr.id}/edit`)}
                             className="flex items-center gap-2 px-4 py-2.5 bg-amber-600 hover:bg-amber-700 text-white rounded-xl text-sm font-semibold transition-colors cursor-pointer"
                         >
                             <Edit3 size={16} />
-                            <span>Edit Draft</span>
+                            <span>Edit / Revisi Pengajuan</span>
                         </button>
-                    ) : pr.approval_request ? (
+                    ) : null}
+                    {pr.approval_request && (
                         <a
                             href={`${approvalUrl}/workflow/${pr.approval_request}`}
                             target="_blank"
@@ -105,7 +106,7 @@ export const PRDetailPage: React.FC = () => {
                             <span>Tracking Approval Hub</span>
                             <ExternalLink size={14} />
                         </a>
-                    ) : null}
+                    )}
 
                     <button
                         onClick={() => navigate('/')}

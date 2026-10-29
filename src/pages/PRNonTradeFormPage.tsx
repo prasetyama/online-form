@@ -304,21 +304,6 @@ export const PRNonTradeFormPage: React.FC = () => {
 
             {/* DYNAMIC FORM TYPE SELECTOR (TRADE VS NON-TRADE) */}
             <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-5 md:p-6">
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
-                    <div>
-                        <h2 className="text-base md:text-lg font-bold text-slate-900">
-                            Pilih Jenis Formulir Purchase Request
-                        </h2>
-                        <p className="text-sm md:text-sm text-slate-500">
-                            Satu halaman form dinamis untuk pengadaan Trade (Barang Dagang) dan Non-Trade (Operasional & Aset)
-                        </p>
-                    </div>
-                    {id && (
-                        <span className="px-3 py-1 rounded-full text-sm font-semibold bg-amber-100 text-amber-800 border border-amber-200 w-fit">
-                            Terkunci ke Non-Trade (Mengedit Draft #{id})
-                        </span>
-                    )}
-                </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {/* Non-Trade Option */}
@@ -827,10 +812,12 @@ export const PRNonTradeFormPage: React.FC = () => {
                                         </label>
                                         <input
                                             type="number"
-                                            min="0.01"
+                                            min={0}
+                                            max={99999}
                                             step="any"
-                                            value={itemForm.quantity}
-                                            onChange={(e) => setItemForm({ ...itemForm, quantity: parseFloat(e.target.value) || 0 })}
+                                            placeholder="0"
+                                            value={itemForm.quantity || ''}
+                                            onChange={(e) => setItemForm({ ...itemForm, quantity: Number(e.target.value) })}
                                             className="w-full px-3.5 py-2 bg-white border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-600 shadow-sm"
                                         />
                                     </div>
