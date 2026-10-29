@@ -14,6 +14,9 @@ export interface User {
     department: string;
     department_id?: number | null;
     company?: string;
+    company_id?: number | null;
+    company_code?: string;
+    company_details?: any;
     image?: string;
     is_approver?: boolean;
     is_superuser?: boolean;
@@ -121,7 +124,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
                         role_level: payload.role,
                         department: dbUser?.department || payload.department || 'Commercial & Operations',
                         department_id: dbUser?.department_id || null,
-                        company: dbUser?.company || payload.company || 'PT Nirwana Lestari',
+                        company: (typeof dbUser?.company === 'object' ? dbUser?.company?.name : dbUser?.company) || payload.company || 'PT Nirwana Lestari',
+                        company_id: dbUser?.company_id || (typeof dbUser?.company === 'object' ? dbUser?.company?.id : null),
+                        company_code: dbUser?.company_code || (typeof dbUser?.company === 'object' ? dbUser?.company?.code : ''),
+                        company_details: dbUser?.company_details || (typeof dbUser?.company === 'object' ? dbUser?.company : null),
                         image: payload.image,
                         is_approver: dbUser?.is_approver ?? isApprover,
                         is_superuser: dbUser?.is_superuser || false,
