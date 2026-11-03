@@ -4,7 +4,7 @@ export interface PRNonTradeItem {
     id?: number;
     item_order?: number;
     goods_code: string;
-    goods_name: string;
+    description: string;
     unit: string;
     quantity: number;
     remark: string;
@@ -41,6 +41,7 @@ export interface MasterItem {
     description?: string;
     unit?: string;
     category?: string;
+    sloc?: string;
     project_name?: string;
 }
 
@@ -80,5 +81,9 @@ export const prNonTradeService = {
 
     searchGoods: async (q: string = ''): Promise<{ results?: MasterItem[] } | MasterItem[]> => {
         return api.get(`/master/goods/`, { params: { search: q } });
+    },
+
+    searchCarNumbers: async (q: string = ''): Promise<{ results?: MasterItem[] } | MasterItem[]> => {
+        return api.get(`/master/car-numbers/`, { params: { search: q } });
     },
 };

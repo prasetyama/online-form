@@ -68,14 +68,13 @@ export const PRDetailPage: React.FC = () => {
                             <h1 className="text-xl md:text-2xl font-bold text-slate-900 tracking-tight">
                                 Detail Purchase Request
                             </h1>
-                            <span className={`px-2.5 py-0.5 rounded-full text-sm font-bold ${
-                                pr.status === 'APPROVED' ? 'bg-emerald-100 text-emerald-800 border border-emerald-200' :
+                            <span className={`px-2.5 py-0.5 rounded-full text-sm font-bold ${pr.status === 'APPROVED' ? 'bg-emerald-100 text-emerald-800 border border-emerald-200' :
                                 pr.status === 'REJECTED' ? 'bg-rose-100 text-rose-800 border border-rose-200' :
-                                pr.status === 'IN_PROGRESS' ? 'bg-indigo-100 text-indigo-800 border border-indigo-200' :
-                                pr.status === 'SUBMITTED' ? 'bg-blue-100 text-blue-800 border border-blue-200' :
-                                pr.status === 'DRAFT' ? 'bg-amber-100 text-amber-800 border border-amber-200' :
-                                    'bg-slate-100 text-slate-700 border border-slate-200'
-                            }`}>
+                                    pr.status === 'IN_PROGRESS' ? 'bg-indigo-100 text-indigo-800 border border-indigo-200' :
+                                        pr.status === 'SUBMITTED' ? 'bg-blue-100 text-blue-800 border border-blue-200' :
+                                            pr.status === 'DRAFT' ? 'bg-amber-100 text-amber-800 border border-amber-200' :
+                                                'bg-slate-100 text-slate-700 border border-slate-200'
+                                }`}>
                                 {pr.status || 'DRAFT'}
                             </span>
                         </div>
@@ -165,11 +164,11 @@ export const PRDetailPage: React.FC = () => {
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
                         <div>
                             <span className="text-sm font-semibold text-slate-400 block uppercase tracking-wider">Goods/Service Type</span>
-                            <p className="font-semibold text-sm text-slate-800 mt-1 capitalize">{pr.goods_service_type}</p>
+                            <p className="font-semibold text-sm text-slate-800 mt-1 capitalize">{pr.goods_service_type === 'not_lumpsum' ? 'Non Lumpsum' : 'Lumpsum'}</p>
                         </div>
                         <div>
                             <span className="text-sm font-semibold text-slate-400 block uppercase tracking-wider">Purchase Type</span>
-                            <p className="font-semibold text-sm text-slate-800 mt-1 capitalize">{pr.purchase_type}</p>
+                            <p className="font-semibold text-sm text-slate-800 mt-1 capitalize">{pr.purchase_type === 'asset' ? 'Asset' : 'Non Asset'}</p>
                         </div>
                         <div>
                             <span className="text-sm font-semibold text-slate-400 block uppercase tracking-wider">CAR / TBR No</span>
@@ -180,7 +179,7 @@ export const PRDetailPage: React.FC = () => {
                             <>
                                 <div>
                                     <span className="text-sm font-semibold text-slate-400 block uppercase tracking-wider">Asset Type</span>
-                                    <p className="font-semibold text-sm text-slate-800 mt-1 capitalize">{pr.asset_type}</p>
+                                    <p className="font-semibold text-sm text-slate-800 mt-1 capitalize">{pr.asset_type === 'non_wbs' ? 'Non WBS' : 'WBS'}</p>
                                 </div>
                                 {pr.asset_type === 'non_wbs' && (
                                     <div>
@@ -230,7 +229,7 @@ export const PRDetailPage: React.FC = () => {
                                 <tr key={idx} className="hover:bg-slate-50/70">
                                     <td className="py-3 px-4 text-center font-mono text-sm text-slate-400">{idx + 1}</td>
                                     <td className="py-3 px-4 font-mono font-bold text-blue-700">{it.goods_code}</td>
-                                    <td className="py-3 px-4 font-medium text-slate-800">{it.goods_name}</td>
+                                    <td className="py-3 px-4 font-medium text-slate-800">{it.description}</td>
                                     <td className="py-3 px-4 text-center">
                                         <span className="px-2 py-0.5 rounded bg-slate-100 text-sm font-medium">
                                             {it.unit}

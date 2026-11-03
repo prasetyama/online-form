@@ -120,6 +120,17 @@ export const MasterSearchModal: React.FC<MasterSearchModalProps> = ({
                                             <span className="font-mono text-xs font-bold px-2 py-0.5 rounded bg-blue-100 text-blue-700">
                                                 {item.code}
                                             </span>
+                                            {item.unit && (
+                                                <span className="font-mono text-xs font-bold px-2 py-0.5 rounded bg-blue-100 text-blue-700">
+                                                    {item.unit}
+                                                </span>
+                                            )}
+
+                                            {item.sloc && (
+                                                <span className="font-mono text-xs font-bold px-2 py-0.5 rounded bg-blue-100 text-blue-700">
+                                                    SLOC: {item.sloc}
+                                                </span>
+                                            )}
                                             {item.category && (
                                                 <span className="text-[10px] font-medium px-2 py-0.5 rounded bg-slate-100 text-slate-600">
                                                     {item.category}

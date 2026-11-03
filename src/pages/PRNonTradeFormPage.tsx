@@ -63,14 +63,14 @@ export const PRNonTradeFormPage: React.FC = () => {
     const [editingItemIndex, setEditingItemIndex] = useState<number | null>(null);
     const [itemForm, setItemForm] = useState<PRNonTradeItem>({
         goods_code: '',
-        goods_name: '',
+        description: '',
         unit: 'PCS',
         quantity: 1,
         remark: ''
     });
 
     // Master Data Modal state
-    const [modalType, setModalType] = useState<'asset' | 'wbs' | 'equipment' | 'goods' | null>(null);
+    const [modalType, setModalType] = useState<'asset' | 'wbs' | 'equipment' | 'goods' | 'car_number' | null>(null);
 
     // Sync user info if user changes
     useEffect(() => {
@@ -114,7 +114,7 @@ export const PRNonTradeFormPage: React.FC = () => {
 
     // Item handlers
     const handleAddItem = () => {
-        if (!itemForm.goods_code || !itemForm.goods_name) {
+        if (!itemForm.goods_code || !itemForm.description) {
             toast.error('Kode barang dan Nama barang wajib diisi!');
             return;
         }
@@ -128,7 +128,7 @@ export const PRNonTradeFormPage: React.FC = () => {
             setItems([...items, { ...itemForm }]);
             toast.info('Item berhasil ditambahkan.');
         }
-        setItemForm({ goods_code: '', goods_name: '', unit: 'PCS', quantity: 1, remark: '' });
+        setItemForm({ goods_code: '', description: '', unit: 'PCS', quantity: 1, remark: '' });
     };
 
     const handleEditItem = (index: number) => {
@@ -141,14 +141,14 @@ export const PRNonTradeFormPage: React.FC = () => {
         setItems(updated);
         if (editingItemIndex === index) {
             setEditingItemIndex(null);
-            setItemForm({ goods_code: '', goods_name: '', unit: 'PCS', quantity: 1, remark: '' });
+            setItemForm({ goods_code: '', description: '', unit: 'PCS', quantity: 1, remark: '' });
         }
         toast.info('Item dihapus.');
     };
 
     const handleCancelItemEdit = () => {
         setEditingItemIndex(null);
-        setItemForm({ goods_code: '', goods_name: '', unit: 'PCS', quantity: 1, remark: '' });
+        setItemForm({ goods_code: '', description: '', unit: 'PCS', quantity: 1, remark: '' });
     };
 
     // Save as Draft handler
@@ -243,10 +243,13 @@ export const PRNonTradeFormPage: React.FC = () => {
             setItemForm((prev) => ({
                 ...prev,
                 goods_code: item.code,
-                goods_name: item.name || '',
+                description: item.description || '',
                 unit: item.unit || 'PCS'
             }));
             toast.info(`Goods dipilih: ${item.code} - ${item.name}`);
+        } else if (modalType === 'car_number') {
+            setCarTbrNo(item.code);
+            toast.info(`CAR / TBR dipilih: ${item.code}${item.description ? ` - ${item.description}` : ''}`);
         }
     };
 
@@ -255,6 +258,7 @@ export const PRNonTradeFormPage: React.FC = () => {
         if (modalType === 'wbs') return prNonTradeService.searchWBS;
         if (modalType === 'equipment') return prNonTradeService.searchEquipments;
         if (modalType === 'goods') return prNonTradeService.searchGoods;
+        if (modalType === 'car_number') return prNonTradeService.searchCarNumbers;
         return async () => [];
     };
 
@@ -263,6 +267,7 @@ export const PRNonTradeFormPage: React.FC = () => {
         if (modalType === 'wbs') return 'Pencarian Master WBS';
         if (modalType === 'equipment') return 'Pencarian Master Equipment';
         if (modalType === 'goods') return 'Pencarian Master Goods / Barang';
+        if (modalType === 'car_number') return 'Pencarian Master CAR / TBR No';
         return '';
     };
 
@@ -482,14 +487,24 @@ export const PRNonTradeFormPage: React.FC = () => {
                                 <label className="block text-sm font-semibold text-slate-700 mb-2">
                                     CAR / TBR No <span className="text-red-500">*</span>
                                 </label>
-                                <input
-                                    type="text"
-                                    required
-                                    placeholder="Masukkan CAR/TBR No..."
-                                    value={carTbrNo}
-                                    onChange={(e) => setCarTbrNo(e.target.value)}
-                                    className="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-600 shadow-sm"
-                                />
+                                <div className="flex gap-2">
+                                    <input
+                                        type="text"
+                                        required
+                                        placeholder="Cari / masukkan CAR/TBR No..."
+                                        value={carTbrNo}
+                                        onChange={(e) => setCarTbrNo(e.target.value)}
+                                        className="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-600 shadow-sm"
+                                    />
+                                    <button
+                                        type="button"
+                                        onClick={() => setModalType('car_number')}
+                                        className="px-3.5 py-2.5 bg-blue-600 text-white hover:bg-blue-700 border border-transparent rounded-xl transition-colors cursor-pointer shrink-0 font-medium text-sm flex items-center gap-1.5 shadow-xs"
+                                        title="Cari Master CAR / TBR No"
+                                    >
+                                        <Search size={16} />
+                                    </button>
+                                </div>
                             </div>
 
                             {/* Radio Selection Group Row */}
@@ -638,7 +653,6 @@ export const PRNonTradeFormPage: React.FC = () => {
                                                         title="Cari Master Asset"
                                                     >
                                                         <Search size={16} />
-                                                        <span>Cari</span>
                                                     </button>
                                                 </div>
                                             </div>
@@ -666,7 +680,6 @@ export const PRNonTradeFormPage: React.FC = () => {
                                                         title="Cari Master WBS"
                                                     >
                                                         <Search size={16} />
-                                                        <span>Cari</span>
                                                     </button>
                                                 </div>
                                             </div>
@@ -785,8 +798,8 @@ export const PRNonTradeFormPage: React.FC = () => {
                                         <input
                                             type="text"
                                             placeholder="Nama barang / deskripsi..."
-                                            value={itemForm.goods_name}
-                                            onChange={(e) => setItemForm({ ...itemForm, goods_name: e.target.value })}
+                                            value={itemForm.description}
+                                            onChange={(e) => setItemForm({ ...itemForm, description: e.target.value })}
                                             className="w-full px-3.5 py-2 bg-white border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-600 shadow-sm"
                                         />
                                     </div>
@@ -885,7 +898,7 @@ export const PRNonTradeFormPage: React.FC = () => {
                                                 <tr key={idx} className="hover:bg-slate-50 transition-colors">
                                                     <td className="py-3.5 px-4 text-center font-mono text-slate-500 text-sm">{idx + 1}</td>
                                                     <td className="py-3.5 px-4 font-mono font-bold text-blue-700 text-sm">{it.goods_code}</td>
-                                                    <td className="py-3.5 px-4 font-medium text-slate-800 text-sm">{it.goods_name}</td>
+                                                    <td className="py-3.5 px-4 font-medium text-slate-800 text-sm">{it.description}</td>
                                                     <td className="py-3.5 px-4 text-center">
                                                         <span className="px-2.5 py-1 rounded bg-slate-100 font-medium text-sm text-slate-700">
                                                             {it.unit}
