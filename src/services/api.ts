@@ -4,7 +4,7 @@ import axios from 'axios';
  * Axios instance for Centralized Approval API calls.
  */
 const api = axios.create({
-    baseURL: '/api/v1',
+    baseURL: import.meta.env.VITE_BACKEND_URL,
     headers: {
         'Content-Type': 'application/json',
     },
