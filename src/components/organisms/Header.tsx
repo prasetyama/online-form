@@ -24,14 +24,21 @@ export const Header: React.FC<HeaderProps> = ({ onMenuClick }) => {
                         <Menu size={20} />
                     </button>
                 )}
-                <div>
-                    <h1 className="text-base font-bold text-slate-800 hidden sm:block">
+                <div className="hidden sm:block">
+                    <h1 className="text-base font-bold text-slate-800">
                         Online Form
                     </h1>
-                    <p className="text-xs text-slate-400 hidden sm:block">
+                    <p className="text-xs text-slate-400">
                         Purchase Request Non-Trade & Trade
                     </p>
                 </div>
+
+                <div className="hidden sm:block h-6 w-px bg-slate-200 mx-1" />
+
+                <span className="inline-flex items-center gap-2 px-3 py-1 rounded-lg text-xs font-bold bg-amber-100 text-amber-900 border border-amber-300">
+                    <span className="w-2 h-2 rounded-full bg-amber-500 shrink-0" aria-hidden="true" />
+                    SIT Testing Environment
+                </span>
             </div>
 
             {/* Right Section */}
