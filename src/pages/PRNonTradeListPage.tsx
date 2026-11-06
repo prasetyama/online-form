@@ -1,8 +1,9 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
     Plus, FileText, Search, Edit3, Eye, Trash2, Loader2,
-    ExternalLink, RefreshCw, CheckCircle2, Clock, AlertCircle, Filter
+    ExternalLink, RefreshCw, CheckCircle2, Clock, AlertCircle, Filter,
+    ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight
 } from 'lucide-react';
 import { prNonTradeService, PRNonTradeData } from '../services/prNonTradeService';
 import { useToast } from '../context/ToastContext';
@@ -13,16 +14,57 @@ export const PRNonTradeListPage: React.FC = () => {
     const approvalUrl = import.meta.env.VITE_APPROVAL_URL || 'http://localhost:5175';
 
     const [items, setItems] = useState<PRNonTradeData[]>([]);
+    const [totalCount, setTotalCount] = useState<number>(0);
+    const [isServerPaginated, setIsServerPaginated] = useState<boolean>(false);
+    const [summaryCounts, setSummaryCounts] = useState<{ totalAll: number; draft: number; submitted: number } | null>(null);
     const [loading, setLoading] = useState(true);
     const [searchQuery, setSearchQuery] = useState('');
+    const [debouncedSearch, setDebouncedSearch] = useState('');
     const [statusFilter, setStatusFilter] = useState<'ALL' | 'DRAFT' | 'SUBMITTED' | 'CANCELLED'>('ALL');
+    const [currentPage, setCurrentPage] = useState(1);
+    const [limit, setLimit] = useState<number>(10);
+    const limitOptions = [10, 30, 50];
+
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            setDebouncedSearch(searchQuery);
+            setCurrentPage(1);
+        }, 300);
+        return () => clearTimeout(timer);
+    }, [searchQuery]);
+
+    const handleStatusFilterChange = (st: 'ALL' | 'DRAFT' | 'SUBMITTED' | 'CANCELLED') => {
+        setStatusFilter(st);
+        setCurrentPage(1);
+    };
 
     const loadData = async () => {
         setLoading(true);
         try {
-            const res = await prNonTradeService.getList();
-            const list = Array.isArray(res) ? res : res.results || [];
-            setItems(list);
+            const res = await prNonTradeService.getList({
+                page: currentPage,
+                limit,
+                search: debouncedSearch || undefined,
+                status: statusFilter !== 'ALL' ? statusFilter : undefined,
+            });
+            if (Array.isArray(res)) {
+                setItems(res);
+                setTotalCount(res.length);
+                setIsServerPaginated(false);
+                setSummaryCounts(null);
+            } else {
+                const list = res.results || [];
+                setItems(list);
+                setTotalCount(typeof res.count === 'number' ? res.count : list.length);
+                setIsServerPaginated(typeof res.count === 'number');
+                if (typeof res.total_all === 'number') {
+                    setSummaryCounts({
+                        totalAll: res.total_all,
+                        draft: res.draft_count ?? 0,
+                        submitted: res.submitted_count ?? 0,
+                    });
+                }
+            }
         } catch (err: any) {
             toast.error('Gagal memuat daftar PR Non-Trade.');
         } finally {
@@ -30,13 +72,9 @@ export const PRNonTradeListPage: React.FC = () => {
         }
     };
 
-    const initialFetchDone = useRef(false);
-
     useEffect(() => {
-        if (initialFetchDone.current) return;
-        initialFetchDone.current = true;
         loadData();
-    }, []);
+    }, [currentPage, limit, debouncedSearch, statusFilter]);
 
     const handleDeleteDraft = async (id: number) => {
         if (!window.confirm('Apakah Anda yakin ingin menghapus draft ini?')) return;
@@ -66,8 +104,46 @@ export const PRNonTradeListPage: React.FC = () => {
         return matchesQuery && item.status === statusFilter;
     });
 
-    const draftCount = items.filter(i => i.status === 'DRAFT').length;
-    const submittedCount = items.filter(i => ['SUBMITTED', 'IN_PROGRESS', 'APPROVED', 'REJECTED'].includes(i.status || '')).length;
+    const totalItems = isServerPaginated ? totalCount : filteredItems.length;
+    const totalPages = Math.max(1, Math.ceil(totalItems / limit));
+    const safePage = Math.min(currentPage, totalPages);
+    const startIndex = (safePage - 1) * limit;
+    const paginatedItems = isServerPaginated ? filteredItems : filteredItems.slice(startIndex, startIndex + limit);
+    const endIndex = totalItems === 0 ? 0 : Math.min(startIndex + paginatedItems.length, totalItems);
+
+    const getPageNumbers = () => {
+        const pages: (number | string)[] = [];
+        const maxPagesToShow = 5;
+
+        if (totalPages <= maxPagesToShow + 2) {
+            for (let i = 1; i <= totalPages; i++) {
+                pages.push(i);
+            }
+        } else {
+            pages.push(1);
+            if (safePage > 3) {
+                pages.push('...');
+            }
+
+            const start = Math.max(2, safePage - 1);
+            const end = Math.min(totalPages - 1, safePage + 1);
+
+            for (let i = start; i <= end; i++) {
+                pages.push(i);
+            }
+
+            if (safePage < totalPages - 2) {
+                pages.push('...');
+            }
+            pages.push(totalPages);
+        }
+
+        return pages;
+    };
+
+    const totalAllCount = summaryCounts ? summaryCounts.totalAll : items.length;
+    const draftCount = summaryCounts ? summaryCounts.draft : items.filter(i => i.status === 'DRAFT').length;
+    const submittedCount = summaryCounts ? summaryCounts.submitted : items.filter(i => ['SUBMITTED', 'IN_PROGRESS', 'APPROVED', 'REJECTED'].includes(i.status || '')).length;
 
     return (
         <div className="max-w-7xl mx-auto space-y-6">
@@ -112,7 +188,7 @@ export const PRNonTradeListPage: React.FC = () => {
             {/* Metrics Quick Strip */}
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <div
-                    onClick={() => setStatusFilter('ALL')}
+                    onClick={() => handleStatusFilterChange('ALL')}
                     className={`p-4 rounded-2xl border cursor-pointer transition-all ${statusFilter === 'ALL'
                         ? 'bg-blue-50/70 border-blue-300 ring-2 ring-blue-500/20'
                         : 'bg-white border-slate-200/80 hover:bg-slate-50/50'
@@ -122,11 +198,11 @@ export const PRNonTradeListPage: React.FC = () => {
                         <span className="text-sm font-semibold text-slate-500 uppercase tracking-wider">Total PR</span>
                         <FileText size={18} className="text-blue-600" />
                     </div>
-                    <p className="text-2xl font-bold text-slate-900 mt-2">{items.length}</p>
+                    <p className="text-2xl font-bold text-slate-900 mt-2">{totalAllCount}</p>
                 </div>
 
                 <div
-                    onClick={() => setStatusFilter('DRAFT')}
+                    onClick={() => handleStatusFilterChange('DRAFT')}
                     className={`p-4 rounded-2xl border cursor-pointer transition-all ${statusFilter === 'DRAFT'
                         ? 'bg-amber-50/70 border-amber-300 ring-2 ring-amber-500/20'
                         : 'bg-white border-slate-200/80 hover:bg-slate-50/50'
@@ -140,7 +216,7 @@ export const PRNonTradeListPage: React.FC = () => {
                 </div>
 
                 <div
-                    onClick={() => setStatusFilter('SUBMITTED')}
+                    onClick={() => handleStatusFilterChange('SUBMITTED')}
                     className={`p-4 rounded-2xl border cursor-pointer transition-all ${statusFilter === 'SUBMITTED'
                         ? 'bg-emerald-50/70 border-emerald-300 ring-2 ring-emerald-500/20'
                         : 'bg-white border-slate-200/80 hover:bg-slate-50/50'
@@ -172,7 +248,7 @@ export const PRNonTradeListPage: React.FC = () => {
                         {(['ALL', 'DRAFT', 'SUBMITTED'] as const).map((st) => (
                             <button
                                 key={st}
-                                onClick={() => setStatusFilter(st)}
+                                onClick={() => handleStatusFilterChange(st)}
                                 className={`px-3 py-1.5 rounded-lg text-sm font-semibold transition-all cursor-pointer ${statusFilter === st
                                     ? 'bg-white text-slate-900 shadow-xs'
                                     : 'text-slate-500 hover:text-slate-800'
@@ -184,7 +260,7 @@ export const PRNonTradeListPage: React.FC = () => {
                     </div>
 
                     <div className="text-sm text-slate-500 font-medium whitespace-nowrap pl-2">
-                        <span className="font-bold text-slate-800">{filteredItems.length}</span> baris
+                        <span className="font-bold text-slate-800">{totalItems}</span> baris
                     </div>
                 </div>
             </div>
@@ -212,7 +288,8 @@ export const PRNonTradeListPage: React.FC = () => {
                         </button>
                     </div>
                 ) : (
-                    <div className="overflow-x-auto">
+                    <>
+                        <div className="overflow-x-auto">
                         <table className="w-full text-left text-sm text-slate-700">
                             <thead className="bg-slate-50 text-slate-600 font-semibold border-b border-slate-200 uppercase text-md tracking-wider">
                                 <tr>
@@ -227,9 +304,9 @@ export const PRNonTradeListPage: React.FC = () => {
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-slate-100">
-                                {filteredItems.map((item, index) => (
+                                {paginatedItems.map((item, index) => (
                                     <tr key={item.id} className="hover:bg-slate-50/70 transition-colors">
-                                        <td className="py-3.5 px-4 text-center text-md">{index + 1}</td>
+                                        <td className="py-3.5 px-4 text-center text-md">{startIndex + index + 1}</td>
                                         <td className="py-3.5 px-4">
                                             {item.transaction_id ? (
                                                 <button
@@ -354,7 +431,121 @@ export const PRNonTradeListPage: React.FC = () => {
                                 ))}
                             </tbody>
                         </table>
-                    </div>
+                        </div>
+
+                        {/* Pagination Footer */}
+                        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 py-3.5 px-4 bg-white border-t border-slate-200/80 text-sm text-slate-600">
+                            <div className="flex flex-wrap items-center gap-3">
+                                <span>
+                                    Menampilkan <strong className="font-semibold text-slate-900">{totalItems === 0 ? 0 : startIndex + 1}</strong> -{' '}
+                                    <strong className="font-semibold text-slate-900">{endIndex}</strong> dari{' '}
+                                    <strong className="font-semibold text-slate-900">{totalItems}</strong> baris
+                                </span>
+
+                                <div className="flex items-center gap-1.5 ml-2 border-l border-slate-200 pl-3">
+                                    <label htmlFor="pr-limit-select" className="text-xs text-slate-500">
+                                        Limit:
+                                    </label>
+                                    <select
+                                        id="pr-limit-select"
+                                        value={limit}
+                                        onChange={(e) => {
+                                            setLimit(Number(e.target.value));
+                                            setCurrentPage(1);
+                                        }}
+                                        className="h-8 rounded-lg border border-slate-200 bg-white px-2.5 text-xs font-semibold text-slate-700 outline-none hover:border-slate-300 focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20 cursor-pointer transition-colors"
+                                    >
+                                        {limitOptions.map((size) => (
+                                            <option key={size} value={size}>
+                                                {size} / halaman
+                                            </option>
+                                        ))}
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div className="flex items-center gap-1">
+                                <button
+                                    type="button"
+                                    onClick={() => setCurrentPage(1)}
+                                    disabled={safePage <= 1}
+                                    aria-label="Halaman pertama"
+                                    title="Halaman pertama"
+                                    className="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-500 transition-colors hover:bg-slate-50 hover:text-slate-900 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
+                                >
+                                    <ChevronsLeft size={15} />
+                                </button>
+
+                                <button
+                                    type="button"
+                                    onClick={() => setCurrentPage(safePage - 1)}
+                                    disabled={safePage <= 1}
+                                    aria-label="Halaman sebelumnya"
+                                    title="Halaman sebelumnya"
+                                    className="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-500 transition-colors hover:bg-slate-50 hover:text-slate-900 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
+                                >
+                                    <ChevronLeft size={15} />
+                                </button>
+
+                                <div className="hidden sm:flex items-center gap-1">
+                                    {getPageNumbers().map((page, idx) => {
+                                        if (page === '...') {
+                                            return (
+                                                <span
+                                                    key={`ellipsis-${idx}`}
+                                                    className="px-2 text-xs font-semibold text-slate-400 select-none"
+                                                >
+                                                    ...
+                                                </span>
+                                            );
+                                        }
+
+                                        const isCurrent = page === safePage;
+                                        return (
+                                            <button
+                                                key={`page-${page}`}
+                                                type="button"
+                                                onClick={() => setCurrentPage(page as number)}
+                                                className={`inline-flex h-8 min-w-[32px] px-2 items-center justify-center rounded-lg text-xs font-medium transition-all cursor-pointer ${
+                                                    isCurrent
+                                                        ? 'bg-blue-600 text-white font-semibold shadow-xs'
+                                                        : 'border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 hover:text-slate-900'
+                                                }`}
+                                            >
+                                                {page}
+                                            </button>
+                                        );
+                                    })}
+                                </div>
+
+                                <span className="sm:hidden px-2 text-xs font-medium text-slate-600">
+                                    Hal {safePage} / {totalPages}
+                                </span>
+
+                                <button
+                                    type="button"
+                                    onClick={() => setCurrentPage(safePage + 1)}
+                                    disabled={safePage >= totalPages}
+                                    aria-label="Halaman berikutnya"
+                                    title="Halaman berikutnya"
+                                    className="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-500 transition-colors hover:bg-slate-50 hover:text-slate-900 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
+                                >
+                                    <ChevronRight size={15} />
+                                </button>
+
+                                <button
+                                    type="button"
+                                    onClick={() => setCurrentPage(totalPages)}
+                                    disabled={safePage >= totalPages}
+                                    aria-label="Halaman terakhir"
+                                    title="Halaman terakhir"
+                                    className="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-500 transition-colors hover:bg-slate-50 hover:text-slate-900 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
+                                >
+                                    <ChevronsRight size={15} />
+                                </button>
+                            </div>
+                        </div>
+                    </>
                 )}
             </div>
         </div>
