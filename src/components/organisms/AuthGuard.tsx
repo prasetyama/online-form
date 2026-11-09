@@ -1,4 +1,5 @@
 import React from 'react';
+import { Navigate, Outlet } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { Loader2 } from 'lucide-react';
 
@@ -25,4 +26,18 @@ export const AuthGuard: React.FC<{ children: React.ReactNode }> = ({ children })
     }
 
     return <>{children}</>;
+};
+
+export const NonApproverGuard: React.FC<{ children?: React.ReactNode }> = ({ children }) => {
+    const { user, loading } = useAuth();
+
+    if (loading) {
+        return null;
+    }
+
+    if (user?.is_approver) {
+        return <Navigate to="/" replace />;
+    }
+
+    return children ? <>{children}</> : <Outlet />;
 };
