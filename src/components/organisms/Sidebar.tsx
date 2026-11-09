@@ -28,13 +28,15 @@ export const Sidebar: React.FC<SidebarProps> = ({
             name: 'Daftar Pengajuan PR',
             href: '/',
             icon: FileText,
-            badge: null
+            badge: null,
+            is_only_approver: true,
         },
         {
             name: 'Buat PR Baru',
             href: '/create',
             icon: PlusCircle,
-            badge: 'Form'
+            badge: 'Form',
+            is_only_approver: false,
         },
     ];
 
@@ -93,7 +95,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
                 {/* Main Navigation */}
                 <nav className="flex-1 space-y-1.5 overflow-y-auto overflow-x-hidden">
-                    {navItems.map((item) => {
+                    {navItems.filter((item) => !user.is_approver || item.is_only_approver).map((item) => {
                         const Icon = item.icon;
                         return (
                             <NavLink
@@ -128,31 +130,33 @@ export const Sidebar: React.FC<SidebarProps> = ({
                     })}
 
                     {/* External Link to Approval Hub */}
-                    <div className="pt-4 mt-4 border-t border-slate-100">
-                        {isExpanded && (
-                            <div className="px-3 pb-2 text-[10px] font-bold uppercase tracking-wider text-slate-400">
-                                Integrasi
-                            </div>
-                        )}
-                        <a
-                            href={approvalUrl}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className={cn(
-                                "flex items-center rounded-xl px-3 py-2.5 text-sm font-medium text-slate-600 hover:bg-blue-50 hover:text-blue-700 transition-colors group",
-                                !isExpanded && "justify-center px-2"
-                            )}
-                            title={!isExpanded ? "Approval Workflow Hub" : undefined}
-                        >
-                            <ShieldCheck size={20} className="shrink-0 text-blue-600" />
+                    {user.is_approver && (
+                        <div className="pt-4 mt-4 border-t border-slate-100">
                             {isExpanded && (
-                                <div className="ml-3 flex-1 flex items-center justify-between overflow-hidden">
-                                    <span className="truncate">Approval Hub</span>
-                                    <ExternalLink size={14} className="text-slate-400" />
+                                <div className="px-3 pb-2 text-[10px] font-bold uppercase tracking-wider text-slate-400">
+                                    Integrasi
                                 </div>
                             )}
-                        </a>
-                    </div>
+                            <a
+                                href={approvalUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className={cn(
+                                    "flex items-center rounded-xl px-3 py-2.5 text-sm font-medium text-slate-600 hover:bg-blue-50 hover:text-blue-700 transition-colors group",
+                                    !isExpanded && "justify-center px-2"
+                                )}
+                                title={!isExpanded ? "Approval Workflow Hub" : undefined}
+                            >
+                                <ShieldCheck size={20} className="shrink-0 text-blue-600" />
+                                {isExpanded && (
+                                    <div className="ml-3 flex-1 flex items-center justify-between overflow-hidden">
+                                        <span className="truncate">Approval Hub</span>
+                                        <ExternalLink size={14} className="text-slate-400" />
+                                    </div>
+                                )}
+                            </a>
+                        </div>
+                    )}
                 </nav>
 
                 {/* Footer User Profile Card */}

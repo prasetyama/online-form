@@ -6,11 +6,13 @@ import {
 } from 'lucide-react';
 import { prNonTradeService, PRNonTradeData } from '../services/prNonTradeService';
 import { useToast } from '../context/ToastContext';
+import { useAuth } from '../context/AuthContext';
 
 export const PRDetailPage: React.FC = () => {
     const { id } = useParams<{ id: string }>();
     const navigate = useNavigate();
     const toast = useToast();
+    const { user } = useAuth();
     const approvalUrl = import.meta.env.VITE_APPROVAL_URL || 'http://localhost:5175';
 
     const [pr, setPr] = useState<PRNonTradeData | null>(null);
@@ -85,7 +87,7 @@ export const PRDetailPage: React.FC = () => {
                 </div>
 
                 <div className="flex items-center gap-2.5">
-                    {pr.status === 'DRAFT' || pr.status === 'REVISE' || pr.status === 'REVISED' ? (
+                    {!user?.is_approver && (pr.status === 'DRAFT' || pr.status === 'REVISE' || pr.status === 'REVISED') ? (
                         <button
                             onClick={() => navigate(`/${pr.id}/edit`)}
                             className="flex items-center gap-2 px-4 py-2.5 bg-amber-600 hover:bg-amber-700 text-white rounded-xl text-sm font-semibold transition-colors cursor-pointer"

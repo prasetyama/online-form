@@ -64,7 +64,7 @@ export const Header: React.FC<HeaderProps> = ({ onMenuClick }) => {
                                 {user?.name || user?.first_name || 'User'}
                             </p>
                             <p className="text-[10px] text-slate-500 leading-tight truncate max-w-[120px]">
-                                {user?.role_name || 'Staff'}
+                                {user?.department || 'Staff'}
                             </p>
                         </div>
                     </div>
