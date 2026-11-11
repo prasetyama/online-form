@@ -28,7 +28,7 @@ export const PRNonTradeListPage: React.FC = () => {
     const [loading, setLoading] = useState(true);
     const [searchQuery, setSearchQuery] = useState('');
     const [debouncedSearch, setDebouncedSearch] = useState('');
-    const [statusFilter, setStatusFilter] = useState<'ALL' | 'DRAFT' | 'SUBMITTED' | 'APPROVED' | 'REJECTED' | 'CANCELLED'>('ALL');
+    const [statusFilter, setStatusFilter] = useState<'ALL' | 'DRAFT' | 'IN_PROGRESS' | 'APPROVED' | 'REJECTED' | 'CANCELLED'>('ALL');
     const [currentPage, setCurrentPage] = useState(1);
     const [limit, setLimit] = useState<number>(10);
     const limitOptions = [10, 30, 50];
@@ -41,7 +41,7 @@ export const PRNonTradeListPage: React.FC = () => {
         return () => clearTimeout(timer);
     }, [searchQuery]);
 
-    const handleStatusFilterChange = (st: 'ALL' | 'DRAFT' | 'SUBMITTED' | 'APPROVED' | 'REJECTED' | 'CANCELLED') => {
+    const handleStatusFilterChange = (st: 'ALL' | 'DRAFT' | 'IN_PROGRESS' | 'APPROVED' | 'REJECTED' | 'CANCELLED') => {
         setStatusFilter(st);
         setCurrentPage(1);
     };
@@ -108,7 +108,7 @@ export const PRNonTradeListPage: React.FC = () => {
         );
 
         if (statusFilter === 'ALL') return matchesQuery;
-        if (statusFilter === 'SUBMITTED') {
+        if (statusFilter === 'IN_PROGRESS') {
             return matchesQuery && ['SUBMITTED', 'IN_PROGRESS', 'PENDING'].includes(item.status || '');
         }
         return matchesQuery && item.status === statusFilter;
@@ -230,14 +230,14 @@ export const PRNonTradeListPage: React.FC = () => {
                 </div>
 
                 <div
-                    onClick={() => handleStatusFilterChange('SUBMITTED')}
-                    className={`p-4 rounded-2xl border cursor-pointer transition-all ${statusFilter === 'SUBMITTED'
+                    onClick={() => handleStatusFilterChange('IN_PROGRESS')}
+                    className={`p-4 rounded-2xl border cursor-pointer transition-all ${statusFilter === 'IN_PROGRESS'
                         ? 'bg-indigo-50/70 border-indigo-300 ring-2 ring-indigo-500/20'
                         : 'bg-white border-slate-200/80 hover:bg-slate-50/50'
                         }`}
                 >
                     <div className="flex items-center justify-between">
-                        <span className="text-sm font-semibold text-indigo-700 uppercase tracking-wider">On Process</span>
+                        <span className="text-sm font-semibold text-indigo-700 uppercase tracking-wider">In Progress</span>
                         <Clock size={18} className="text-indigo-600" />
                     </div>
                     <p className="text-2xl font-bold text-indigo-900 mt-2">{submittedCount}</p>
@@ -287,7 +287,7 @@ export const PRNonTradeListPage: React.FC = () => {
 
                 <div className="flex items-center gap-2 w-full sm:w-auto justify-between sm:justify-end flex-wrap">
                     <div className="flex items-center gap-1.5 bg-slate-100 p-1 rounded-xl flex-wrap">
-                        {(['ALL', 'DRAFT', 'SUBMITTED', 'APPROVED', 'REJECTED'] as const).map((st) => (
+                        {(['ALL', 'DRAFT', 'IN_PROGRESS', 'APPROVED', 'REJECTED'] as const).map((st) => (
                             <button
                                 key={st}
                                 onClick={() => handleStatusFilterChange(st)}
