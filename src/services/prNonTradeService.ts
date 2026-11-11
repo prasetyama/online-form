@@ -60,6 +60,8 @@ export interface PRNonTradeListResponse {
     total_all?: number;
     draft_count?: number;
     submitted_count?: number;
+    approved_count?: number;
+    rejected_count?: number;
 }
 
 export const prNonTradeService = {

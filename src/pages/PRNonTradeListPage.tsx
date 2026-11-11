@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
     Plus, FileText, Search, Edit3, Eye, Trash2, Loader2,
-    ExternalLink, RefreshCw, CheckCircle2, Clock, AlertCircle, Filter,
+    ExternalLink, RefreshCw, CheckCircle2, Clock, AlertCircle, XCircle, Filter,
     ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight
 } from 'lucide-react';
 import { prNonTradeService, PRNonTradeData } from '../services/prNonTradeService';
@@ -18,11 +18,17 @@ export const PRNonTradeListPage: React.FC = () => {
     const [items, setItems] = useState<PRNonTradeData[]>([]);
     const [totalCount, setTotalCount] = useState<number>(0);
     const [isServerPaginated, setIsServerPaginated] = useState<boolean>(false);
-    const [summaryCounts, setSummaryCounts] = useState<{ totalAll: number; draft: number; submitted: number } | null>(null);
+    const [summaryCounts, setSummaryCounts] = useState<{
+        totalAll: number;
+        draft: number;
+        submitted: number;
+        approved: number;
+        rejected: number;
+    } | null>(null);
     const [loading, setLoading] = useState(true);
     const [searchQuery, setSearchQuery] = useState('');
     const [debouncedSearch, setDebouncedSearch] = useState('');
-    const [statusFilter, setStatusFilter] = useState<'ALL' | 'DRAFT' | 'SUBMITTED' | 'CANCELLED'>('ALL');
+    const [statusFilter, setStatusFilter] = useState<'ALL' | 'DRAFT' | 'SUBMITTED' | 'APPROVED' | 'REJECTED' | 'CANCELLED'>('ALL');
     const [currentPage, setCurrentPage] = useState(1);
     const [limit, setLimit] = useState<number>(10);
     const limitOptions = [10, 30, 50];
@@ -35,7 +41,7 @@ export const PRNonTradeListPage: React.FC = () => {
         return () => clearTimeout(timer);
     }, [searchQuery]);
 
-    const handleStatusFilterChange = (st: 'ALL' | 'DRAFT' | 'SUBMITTED' | 'CANCELLED') => {
+    const handleStatusFilterChange = (st: 'ALL' | 'DRAFT' | 'SUBMITTED' | 'APPROVED' | 'REJECTED' | 'CANCELLED') => {
         setStatusFilter(st);
         setCurrentPage(1);
     };
@@ -64,6 +70,8 @@ export const PRNonTradeListPage: React.FC = () => {
                         totalAll: res.total_all,
                         draft: res.draft_count ?? 0,
                         submitted: res.submitted_count ?? 0,
+                        approved: res.approved_count ?? 0,
+                        rejected: res.rejected_count ?? 0,
                     });
                 }
             }
@@ -101,7 +109,7 @@ export const PRNonTradeListPage: React.FC = () => {
 
         if (statusFilter === 'ALL') return matchesQuery;
         if (statusFilter === 'SUBMITTED') {
-            return matchesQuery && ['SUBMITTED', 'IN_PROGRESS', 'APPROVED', 'REJECTED'].includes(item.status || '');
+            return matchesQuery && ['SUBMITTED', 'IN_PROGRESS', 'PENDING'].includes(item.status || '');
         }
         return matchesQuery && item.status === statusFilter;
     });
@@ -145,7 +153,9 @@ export const PRNonTradeListPage: React.FC = () => {
 
     const totalAllCount = summaryCounts ? summaryCounts.totalAll : items.length;
     const draftCount = summaryCounts ? summaryCounts.draft : items.filter(i => i.status === 'DRAFT').length;
-    const submittedCount = summaryCounts ? summaryCounts.submitted : items.filter(i => ['SUBMITTED', 'IN_PROGRESS', 'APPROVED', 'REJECTED'].includes(i.status || '')).length;
+    const submittedCount = summaryCounts ? summaryCounts.submitted : items.filter(i => ['SUBMITTED', 'IN_PROGRESS', 'PENDING'].includes(i.status || '')).length;
+    const approvedCount = summaryCounts ? summaryCounts.approved : items.filter(i => i.status === 'APPROVED').length;
+    const rejectedCount = summaryCounts ? summaryCounts.rejected : items.filter(i => i.status === 'REJECTED').length;
 
     return (
         <div className="max-w-7xl mx-auto space-y-6">
@@ -190,7 +200,7 @@ export const PRNonTradeListPage: React.FC = () => {
             </div>
 
             {/* Metrics Quick Strip */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
                 <div
                     onClick={() => handleStatusFilterChange('ALL')}
                     className={`p-4 rounded-2xl border cursor-pointer transition-all ${statusFilter === 'ALL'
@@ -222,15 +232,43 @@ export const PRNonTradeListPage: React.FC = () => {
                 <div
                     onClick={() => handleStatusFilterChange('SUBMITTED')}
                     className={`p-4 rounded-2xl border cursor-pointer transition-all ${statusFilter === 'SUBMITTED'
+                        ? 'bg-indigo-50/70 border-indigo-300 ring-2 ring-indigo-500/20'
+                        : 'bg-white border-slate-200/80 hover:bg-slate-50/50'
+                        }`}
+                >
+                    <div className="flex items-center justify-between">
+                        <span className="text-sm font-semibold text-indigo-700 uppercase tracking-wider">Submitted / On Process</span>
+                        <Clock size={18} className="text-indigo-600" />
+                    </div>
+                    <p className="text-2xl font-bold text-indigo-900 mt-2">{submittedCount}</p>
+                </div>
+
+                <div
+                    onClick={() => handleStatusFilterChange('APPROVED')}
+                    className={`p-4 rounded-2xl border cursor-pointer transition-all ${statusFilter === 'APPROVED'
                         ? 'bg-emerald-50/70 border-emerald-300 ring-2 ring-emerald-500/20'
                         : 'bg-white border-slate-200/80 hover:bg-slate-50/50'
                         }`}
                 >
                     <div className="flex items-center justify-between">
-                        <span className="text-sm font-semibold text-emerald-700 uppercase tracking-wider">Submitted / On Process</span>
+                        <span className="text-sm font-semibold text-emerald-700 uppercase tracking-wider">Approved</span>
                         <CheckCircle2 size={18} className="text-emerald-600" />
                     </div>
-                    <p className="text-2xl font-bold text-emerald-900 mt-2">{submittedCount}</p>
+                    <p className="text-2xl font-bold text-emerald-900 mt-2">{approvedCount}</p>
+                </div>
+
+                <div
+                    onClick={() => handleStatusFilterChange('REJECTED')}
+                    className={`p-4 rounded-2xl border cursor-pointer transition-all ${statusFilter === 'REJECTED'
+                        ? 'bg-rose-50/70 border-rose-300 ring-2 ring-rose-500/20'
+                        : 'bg-white border-slate-200/80 hover:bg-slate-50/50'
+                        }`}
+                >
+                    <div className="flex items-center justify-between">
+                        <span className="text-sm font-semibold text-rose-700 uppercase tracking-wider">Rejected</span>
+                        <XCircle size={18} className="text-rose-600" />
+                    </div>
+                    <p className="text-2xl font-bold text-rose-900 mt-2">{rejectedCount}</p>
                 </div>
             </div>
 
@@ -247,9 +285,9 @@ export const PRNonTradeListPage: React.FC = () => {
                     />
                 </div>
 
-                <div className="flex items-center gap-2 w-full sm:w-auto justify-between sm:justify-end">
-                    <div className="flex items-center gap-1.5 bg-slate-100 p-1 rounded-xl">
-                        {(['ALL', 'DRAFT', 'SUBMITTED'] as const).map((st) => (
+                <div className="flex items-center gap-2 w-full sm:w-auto justify-between sm:justify-end flex-wrap">
+                    <div className="flex items-center gap-1.5 bg-slate-100 p-1 rounded-xl flex-wrap">
+                        {(['ALL', 'DRAFT', 'SUBMITTED', 'APPROVED', 'REJECTED'] as const).map((st) => (
                             <button
                                 key={st}
                                 onClick={() => handleStatusFilterChange(st)}
