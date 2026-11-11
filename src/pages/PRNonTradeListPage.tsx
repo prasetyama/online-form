@@ -237,7 +237,7 @@ export const PRNonTradeListPage: React.FC = () => {
                         }`}
                 >
                     <div className="flex items-center justify-between">
-                        <span className="text-sm font-semibold text-indigo-700 uppercase tracking-wider">Submitted / On Process</span>
+                        <span className="text-sm font-semibold text-indigo-700 uppercase tracking-wider">On Process</span>
                         <Clock size={18} className="text-indigo-600" />
                     </div>
                     <p className="text-2xl font-bold text-indigo-900 mt-2">{submittedCount}</p>
@@ -389,7 +389,7 @@ export const PRNonTradeListPage: React.FC = () => {
                                                 {(item.status === 'SUBMITTED' || item.status === 'PENDING') && (
                                                     <span className="px-2.5 py-1 rounded-full text-sm font-bold bg-blue-50 text-blue-800 border border-blue-200 inline-flex items-center gap-1">
                                                         <CheckCircle2 size={12} />
-                                                        SUBMITTED
+                                                        ON PROCESS
                                                     </span>
                                                 )}
                                                 {item.status === 'IN_PROGRESS' && (
