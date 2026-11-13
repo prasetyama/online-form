@@ -25,14 +25,14 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
     const navItems = [
         {
-            name: 'Daftar Pengajuan PR',
+            name: 'PR Request List',
             href: '/',
             icon: FileText,
             badge: null,
             is_only_approver: true,
         },
         {
-            name: 'Buat PR Baru',
+            name: 'Create New PR',
             href: '/create',
             icon: PlusCircle,
             badge: 'Form',
@@ -81,13 +81,13 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 )}>
                     {isExpanded && (
                         <h2 className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">
-                            Menu Utama
+                            Main Menu
                         </h2>
                     )}
                     <button
                         onClick={() => setIsExpanded(!isExpanded)}
                         className="hidden lg:flex p-1.5 rounded-lg hover:bg-slate-100 text-slate-400 hover:text-slate-800 transition-colors cursor-pointer"
-                        title={isExpanded ? "Kecilkan Sidebar" : "Perbesar Sidebar"}
+                        title={isExpanded ? "Collapse Sidebar" : "Expand Sidebar"}
                     >
                         {isExpanded ? <ChevronLeft size={17} /> : <ChevronRight size={17} />}
                     </button>
@@ -134,7 +134,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                         <div className="pt-4 mt-4 border-t border-slate-100">
                             {isExpanded && (
                                 <div className="px-3 pb-2 text-[10px] font-bold uppercase tracking-wider text-slate-400">
-                                    Integrasi
+                                    Integration
                                 </div>
                             )}
                             <a

@@ -76,7 +76,7 @@ export const PRNonTradeListPage: React.FC = () => {
                 }
             }
         } catch (err: any) {
-            toast.error('Gagal memuat daftar PR Non-Trade.');
+            toast.error('Failed to load PR Non-Trade list.');
         } finally {
             setLoading(false);
         }
@@ -87,13 +87,13 @@ export const PRNonTradeListPage: React.FC = () => {
     }, [currentPage, limit, debouncedSearch, statusFilter]);
 
     const handleDeleteDraft = async (id: number) => {
-        if (!window.confirm('Apakah Anda yakin ingin menghapus draft ini?')) return;
+        if (!window.confirm('Are you sure you want to delete this draft?')) return;
         try {
             await prNonTradeService.deleteDraft(id);
-            toast.success('Draft berhasil dihapus.');
+            toast.success('Draft deleted successfully.');
             loadData();
         } catch (err: any) {
-            toast.error('Gagal menghapus draft.');
+            toast.error('Failed to delete draft.');
         }
     };
 
@@ -168,10 +168,10 @@ export const PRNonTradeListPage: React.FC = () => {
                         </div>
                         <div>
                             <h1 className="text-xl md:text-2xl font-bold text-slate-900 tracking-tight">
-                                Daftar Purchase Request (PR)
+                                Purchase Request (PR) List
                             </h1>
                             <p className="text-slate-500 text-sm md:text-sm mt-0.5">
-                                Kelola pengajuan PR Non-Trade & Trade terintegrasi Approval HUB
+                                Manage Non-Trade & Trade PR submissions integrated with Approval Hub
                             </p>
                         </div>
                     </div>
@@ -183,7 +183,7 @@ export const PRNonTradeListPage: React.FC = () => {
                             onClick={loadData}
                             disabled={loading}
                             className="p-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-sm transition-colors cursor-pointer"
-                            title="Muat Ulang Data"
+                            title="Reload Data"
                         >
                             <RefreshCw size={17} className={loading ? "animate-spin" : ""} />
                         </button>
@@ -193,7 +193,7 @@ export const PRNonTradeListPage: React.FC = () => {
                             className="flex items-center gap-2 px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-sm font-semibold shadow-sm transition-all cursor-pointer shrink-0"
                         >
                             <Plus size={18} />
-                            <span>Buat PR Baru</span>
+                            <span>Create New PR</span>
                         </button>
                     </div>
                 )}
@@ -223,7 +223,7 @@ export const PRNonTradeListPage: React.FC = () => {
                         }`}
                 >
                     <div className="flex items-center justify-between">
-                        <span className="text-sm font-semibold text-amber-700 uppercase tracking-wider">Draft Tersimpan</span>
+                        <span className="text-sm font-semibold text-amber-700 uppercase tracking-wider">Saved Drafts</span>
                         <Clock size={18} className="text-amber-600" />
                     </div>
                     <p className="text-2xl font-bold text-amber-900 mt-2">{draftCount}</p>
@@ -278,7 +278,7 @@ export const PRNonTradeListPage: React.FC = () => {
                     <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
                     <input
                         type="text"
-                        placeholder="Cari Transaction ID, Purpose, Requestor..."
+                        placeholder="Search Transaction ID, Purpose, Requestor..."
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
                         className="w-full pl-10 pr-4 py-2.5 bg-slate-50/50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-600 focus:bg-white transition-all shadow-xs"
@@ -296,13 +296,13 @@ export const PRNonTradeListPage: React.FC = () => {
                                     : 'text-slate-500 hover:text-slate-800'
                                     }`}
                             >
-                                {st === 'ALL' ? 'Semua' : st}
+                                {st === 'ALL' ? 'All' : st}
                             </button>
                         ))}
                     </div>
 
                     <div className="text-sm text-slate-500 font-medium whitespace-nowrap pl-2">
-                        <span className="font-bold text-slate-800">{totalItems}</span> baris
+                        <span className="font-bold text-slate-800">{totalItems}</span> rows
                     </div>
                 </div>
             </div>
@@ -312,14 +312,14 @@ export const PRNonTradeListPage: React.FC = () => {
                 {loading ? (
                     <div className="flex flex-col items-center justify-center py-20 gap-3 text-slate-400">
                         <Loader2 size={36} className="animate-spin text-blue-600" />
-                        <span className="text-sm font-medium">Memuat data Purchase Request...</span>
+                        <span className="text-sm font-medium">Loading Purchase Requests...</span>
                     </div>
                 ) : filteredItems.length === 0 ? (
                     <div className="text-center py-20 px-4">
                         <FileText size={48} className="mx-auto text-slate-300 mb-3" />
-                        <p className="text-base font-semibold text-slate-800">Tidak ada pengajuan PR yang ditemukan</p>
+                        <p className="text-base font-semibold text-slate-800">No PR submissions found</p>
                         <p className="text-sm text-slate-500 mt-1 max-w-sm mx-auto">
-                            {searchQuery ? 'Coba ubah kata kunci pencarian atau filter status.' : 'Mulai buat pengajuan formulir PR baru dengan mengklik tombol di bawah.'}
+                            {searchQuery ? 'Try changing your search keyword or status filter.' : 'Start creating a new PR form submission by clicking the button below.'}
                         </p>
                         {!user.is_approver && (
                             <button
@@ -327,7 +327,7 @@ export const PRNonTradeListPage: React.FC = () => {
                                 className="mt-5 inline-flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-sm font-semibold transition-colors cursor-pointer"
                             >
                                 <Plus size={16} />
-                                <span>Buat PR Sekarang</span>
+                                <span>Create PR Now</span>
                             </button>
                         )}
                     </div>
@@ -339,12 +339,12 @@ export const PRNonTradeListPage: React.FC = () => {
                                     <tr>
                                         <th className="py-3.5 px-4 text-md">No</th>
                                         <th className="py-3.5 px-4">Transaction ID</th>
-                                        <th className="py-3.5 px-4">Tanggal</th>
+                                        <th className="py-3.5 px-4">Date</th>
                                         <th className="py-3.5 px-4">Requestor</th>
                                         <th className="py-3.5 px-4">Purpose</th>
                                         <th className="py-3.5 px-4 text-center">Status</th>
-                                        <th className="py-3.5 px-4 text-center">Item</th>
-                                        <th className="py-3.5 px-4 text-center w-36">Aksi</th>
+                                        <th className="py-3.5 px-4 text-center">Items</th>
+                                        <th className="py-3.5 px-4 text-center w-36">Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-slate-100">
@@ -361,7 +361,7 @@ export const PRNonTradeListPage: React.FC = () => {
                                                     </button>
                                                 ) : (
                                                     <span className="text-amber-700 font-medium italic text-sm bg-amber-50 px-2 py-0.5 rounded-md border border-amber-200">
-                                                        Draft (Belum diset)
+                                                        Draft (Unassigned)
                                                     </span>
                                                 )}
                                             </td>
@@ -434,7 +434,7 @@ export const PRNonTradeListPage: React.FC = () => {
                                                     <button
                                                         onClick={() => navigate(`/detail/${item.id}`)}
                                                         className="p-1.5 text-slate-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors cursor-pointer"
-                                                        title="Lihat Detail Form PR"
+                                                        title="View PR Form Details"
                                                     >
                                                         <Eye size={17} />
                                                     </button>
@@ -444,14 +444,14 @@ export const PRNonTradeListPage: React.FC = () => {
                                                             <button
                                                                 onClick={() => navigate(`/${item.id}/edit`)}
                                                                 className="p-1.5 text-amber-700 hover:bg-amber-50 rounded-lg transition-colors cursor-pointer"
-                                                                title="Edit / Revisi Pengajuan"
+                                                                title="Edit / Revise Submission"
                                                             >
                                                                 <Edit3 size={17} />
                                                             </button>
                                                             <button
                                                                 onClick={() => item.id && handleDeleteDraft(item.id)}
                                                                 className="p-1.5 text-rose-600 hover:bg-rose-50 rounded-lg transition-colors cursor-pointer"
-                                                                title="Hapus Draft"
+                                                                title="Delete Draft"
                                                             >
                                                                 <Trash2 size={17} />
                                                             </button>
@@ -463,7 +463,7 @@ export const PRNonTradeListPage: React.FC = () => {
                                                                 target="_blank"
                                                                 rel="noopener noreferrer"
                                                                 className="p-1.5 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors cursor-pointer inline-flex items-center gap-1"
-                                                                title="Buka Tracking Approval di Centralized Approval Hub"
+                                                                title="Open Approval Tracking in Centralized Approval Hub"
                                                             >
                                                                 <ExternalLink size={16} />
                                                             </a>
@@ -481,9 +481,9 @@ export const PRNonTradeListPage: React.FC = () => {
                         <div className="flex flex-col sm:flex-row items-center justify-between gap-4 py-3.5 px-4 bg-white border-t border-slate-200/80 text-sm text-slate-600">
                             <div className="flex flex-wrap items-center gap-3">
                                 <span>
-                                    Menampilkan <strong className="font-semibold text-slate-900">{totalItems === 0 ? 0 : startIndex + 1}</strong> -{' '}
-                                    <strong className="font-semibold text-slate-900">{endIndex}</strong> dari{' '}
-                                    <strong className="font-semibold text-slate-900">{totalItems}</strong> baris
+                                    Showing <strong className="font-semibold text-slate-900">{totalItems === 0 ? 0 : startIndex + 1}</strong> -{' '}
+                                    <strong className="font-semibold text-slate-900">{endIndex}</strong> of{' '}
+                                    <strong className="font-semibold text-slate-900">{totalItems}</strong> rows
                                 </span>
 
                                 <div className="flex items-center gap-1.5 ml-2 border-l border-slate-200 pl-3">
@@ -501,7 +501,7 @@ export const PRNonTradeListPage: React.FC = () => {
                                     >
                                         {limitOptions.map((size) => (
                                             <option key={size} value={size}>
-                                                {size} / halaman
+                                                {size} / page
                                             </option>
                                         ))}
                                     </select>
@@ -513,8 +513,8 @@ export const PRNonTradeListPage: React.FC = () => {
                                     type="button"
                                     onClick={() => setCurrentPage(1)}
                                     disabled={safePage <= 1}
-                                    aria-label="Halaman pertama"
-                                    title="Halaman pertama"
+                                    aria-label="First page"
+                                    title="First page"
                                     className="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-500 transition-colors hover:bg-slate-50 hover:text-slate-900 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
                                 >
                                     <ChevronsLeft size={15} />
@@ -524,8 +524,8 @@ export const PRNonTradeListPage: React.FC = () => {
                                     type="button"
                                     onClick={() => setCurrentPage(safePage - 1)}
                                     disabled={safePage <= 1}
-                                    aria-label="Halaman sebelumnya"
-                                    title="Halaman sebelumnya"
+                                    aria-label="Previous page"
+                                    title="Previous page"
                                     className="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-500 transition-colors hover:bg-slate-50 hover:text-slate-900 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
                                 >
                                     <ChevronLeft size={15} />
@@ -562,15 +562,15 @@ export const PRNonTradeListPage: React.FC = () => {
                                 </div>
 
                                 <span className="sm:hidden px-2 text-xs font-medium text-slate-600">
-                                    Hal {safePage} / {totalPages}
+                                    Page {safePage} / {totalPages}
                                 </span>
 
                                 <button
                                     type="button"
                                     onClick={() => setCurrentPage(safePage + 1)}
                                     disabled={safePage >= totalPages}
-                                    aria-label="Halaman berikutnya"
-                                    title="Halaman berikutnya"
+                                    aria-label="Next page"
+                                    title="Next page"
                                     className="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-500 transition-colors hover:bg-slate-50 hover:text-slate-900 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
                                 >
                                     <ChevronRight size={15} />
@@ -580,8 +580,8 @@ export const PRNonTradeListPage: React.FC = () => {
                                     type="button"
                                     onClick={() => setCurrentPage(totalPages)}
                                     disabled={safePage >= totalPages}
-                                    aria-label="Halaman terakhir"
-                                    title="Halaman terakhir"
+                                    aria-label="Last page"
+                                    title="Last page"
                                     className="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-500 transition-colors hover:bg-slate-50 hover:text-slate-900 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
                                 >
                                     <ChevronsRight size={15} />

@@ -115,11 +115,11 @@ export const PRTradeDummyForm: React.FC<PRTradeDummyFormProps> = ({ user, onBack
     // Item Handlers
     const handleSaveItem = () => {
         if (!itemForm.sku_code.trim() || !itemForm.product_name.trim()) {
-            toast.error('Kode SKU dan Nama Produk wajib diisi!');
+            toast.error('SKU Code and Product Name are required!');
             return;
         }
         if (itemForm.quantity <= 0) {
-            toast.error('Quantity harus lebih dari 0!');
+            toast.error('Quantity must be greater than 0!');
             return;
         }
 
@@ -128,10 +128,10 @@ export const PRTradeDummyForm: React.FC<PRTradeDummyFormProps> = ({ user, onBack
             updated[editingIndex] = { ...itemForm };
             setItems(updated);
             setEditingIndex(null);
-            toast.success('Item produk dagang berhasil diperbarui.');
+            toast.success('Trade product item updated successfully.');
         } else {
             setItems([...items, { ...itemForm }]);
-            toast.success('Item produk dagang berhasil ditambahkan.');
+            toast.success('Trade product item added successfully.');
         }
 
         // Reset
@@ -167,7 +167,7 @@ export const PRTradeDummyForm: React.FC<PRTradeDummyFormProps> = ({ user, onBack
                 remark: ''
             });
         }
-        toast.info('Item produk dihapus.');
+        toast.info('Product item removed.');
     };
 
     const handleCancelEdit = () => {
@@ -187,7 +187,7 @@ export const PRTradeDummyForm: React.FC<PRTradeDummyFormProps> = ({ user, onBack
     // Modal select
     const handleSelectMaster = (item: MasterItem) => {
         if (modalType === 'supplier') {
-            toast.info(`Supplier dipilih: ${item.name}`);
+            toast.info(`Selected Supplier: ${item.name}`);
         } else if (modalType === 'product') {
             setItemForm((prev) => ({
                 ...prev,
@@ -197,7 +197,7 @@ export const PRTradeDummyForm: React.FC<PRTradeDummyFormProps> = ({ user, onBack
                 category: item.category || 'General',
                 remark: item.project_name || prev.remark
             }));
-            toast.info(`Produk dipilih: ${item.code} - ${item.name}`);
+            toast.info(`Selected Product: ${item.code} - ${item.name}`);
         }
     };
 
@@ -220,13 +220,13 @@ export const PRTradeDummyForm: React.FC<PRTradeDummyFormProps> = ({ user, onBack
     };
 
     const handleSaveDraftSimulated = () => {
-        toast.success('Draft PR Trade berhasil disimpan sebagai simulasi (dummy).');
+        toast.success('PR Trade draft saved as simulation (dummy).');
     };
 
     const handleSubmitSimulated = (e: React.FormEvent) => {
         e.preventDefault();
         if (items.length === 0) {
-            toast.error('Tambahkan minimal 1 item barang dagang!');
+            toast.error('Please add at least 1 trade item!');
             return;
         }
     };
@@ -253,7 +253,7 @@ export const PRTradeDummyForm: React.FC<PRTradeDummyFormProps> = ({ user, onBack
                             </label>
                             <input
                                 type="text"
-                                value={transactionId || '(Otomatis saat disimpan)'}
+                                value={transactionId || '(Auto-generated upon save)'}
                                 readOnly
                                 className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-mono font-bold text-indigo-700 shadow-xs cursor-default select-all"
                             />
@@ -336,7 +336,7 @@ export const PRTradeDummyForm: React.FC<PRTradeDummyFormProps> = ({ user, onBack
 
                     <div className="p-6 space-y-6">
 
-                        {/* Purpose / Catatan Justifikasi */}
+                        {/* Purpose */}
                         <div>
                             <label className="block text-sm font-semibold text-slate-700 mb-2">
                                 Purpose <span className="text-red-500">*</span>
@@ -346,7 +346,7 @@ export const PRTradeDummyForm: React.FC<PRTradeDummyFormProps> = ({ user, onBack
                                 required
                                 value={purpose}
                                 onChange={(e) => setPurpose(e.target.value)}
-                                placeholder="Jelaskan kebutuhan pembelian barang dagangan ini..."
+                                placeholder="Describe the purpose of this trade merchandise purchase..."
                                 className="w-full px-4 py-2.5 bg-white border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-600 shadow-sm"
                             />
                         </div>
@@ -354,7 +354,7 @@ export const PRTradeDummyForm: React.FC<PRTradeDummyFormProps> = ({ user, onBack
                     </div>
                 </div>
 
-                {/* 3. DETAIL ITEMS (BARANG DAGANG) */}
+                {/* 3. DETAIL ITEMS */}
                 <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
                     <div className="px-6 py-4 bg-slate-50 border-b border-slate-200 flex items-center justify-between">
                         <div className="flex items-center gap-2.5 text-slate-800 font-bold text-base">
@@ -381,7 +381,7 @@ export const PRTradeDummyForm: React.FC<PRTradeDummyFormProps> = ({ user, onBack
                                     className="text-xs font-semibold text-indigo-600 hover:text-indigo-700 bg-indigo-50 hover:bg-indigo-100 px-3 py-1.5 rounded-lg border border-indigo-200 transition-colors flex items-center gap-1.5"
                                 >
                                     <Search size={14} />
-                                    <span>Pilih dari Master Katalog Dagang</span>
+                                    <span>Select from Master Trade Catalog</span>
                                 </button>
                             </div>
 
@@ -389,11 +389,11 @@ export const PRTradeDummyForm: React.FC<PRTradeDummyFormProps> = ({ user, onBack
                                 {/* SKU Code */}
                                 <div className="md:col-span-3">
                                     <label className="block text-xs font-semibold text-slate-700 mb-1.5">
-                                        Kode SKU / Barcode <span className="text-red-500">*</span>
+                                        SKU Code / Barcode <span className="text-red-500">*</span>
                                     </label>
                                     <input
                                         type="text"
-                                        placeholder="Contoh: SKU-ICBP-01"
+                                        placeholder="e.g. SKU-ICBP-01"
                                         value={itemForm.sku_code}
                                         onChange={(e) => setItemForm({ ...itemForm, sku_code: e.target.value })}
                                         className="w-full px-3.5 py-2 bg-white border border-slate-300 rounded-xl text-sm font-mono focus:outline-none focus:ring-2 focus:ring-indigo-600 shadow-sm"
@@ -403,11 +403,11 @@ export const PRTradeDummyForm: React.FC<PRTradeDummyFormProps> = ({ user, onBack
                                 {/* Product Name */}
                                 <div className="md:col-span-4">
                                     <label className="block text-xs font-semibold text-slate-700 mb-1.5">
-                                        Nama Produk Dagang <span className="text-red-500">*</span>
+                                        Trade Product Name <span className="text-red-500">*</span>
                                     </label>
                                     <input
                                         type="text"
-                                        placeholder="Nama produk dagang..."
+                                        placeholder="Trade product name..."
                                         value={itemForm.product_name}
                                         onChange={(e) => setItemForm({ ...itemForm, product_name: e.target.value })}
                                         className="w-full px-3.5 py-2 bg-white border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-600 shadow-sm"
@@ -417,7 +417,7 @@ export const PRTradeDummyForm: React.FC<PRTradeDummyFormProps> = ({ user, onBack
                                 {/* Unit */}
                                 <div className="md:col-span-2">
                                     <label className="block text-xs font-semibold text-slate-700 mb-1.5">
-                                        Satuan (UOM)
+                                        Unit (UOM)
                                     </label>
                                     <select
                                         value={itemForm.unit}
@@ -470,14 +470,14 @@ export const PRTradeDummyForm: React.FC<PRTradeDummyFormProps> = ({ user, onBack
                                         className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-sm font-semibold shadow-sm transition-colors cursor-pointer"
                                     >
                                         <Save size={16} />
-                                        <span>{editingIndex !== null ? 'Simpan' : 'Tambah'}</span>
+                                        <span>{editingIndex !== null ? 'Save' : 'Add'}</span>
                                     </button>
                                     {editingIndex !== null && (
                                         <button
                                             type="button"
                                             onClick={handleCancelEdit}
                                             className="px-2.5 py-2 bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-xl text-sm transition-colors cursor-pointer"
-                                            title="Batal Edit"
+                                            title="Cancel Edit"
                                         >
                                             <X size={16} />
                                         </button>
@@ -492,19 +492,19 @@ export const PRTradeDummyForm: React.FC<PRTradeDummyFormProps> = ({ user, onBack
                                 <thead className="bg-slate-100 text-slate-700 font-semibold border-b border-slate-200 uppercase text-xs tracking-wider">
                                     <tr>
                                         <th className="py-3 px-3.5 w-12 text-center">#</th>
-                                        <th className="py-3 px-3.5">SKU & Deskripsi Produk</th>
-                                        <th className="py-3 px-3.5 text-center">Satuan</th>
+                                        <th className="py-3 px-3.5">SKU & Product Description</th>
+                                        <th className="py-3 px-3.5 text-center">Unit</th>
                                         <th className="py-3 px-3.5 text-right">Qty</th>
-                                        <th className="py-3 px-3.5 text-right">Harga Satuan (Rp)</th>
-                                        <th className="py-3 px-3.5">Catatan</th>
-                                        <th className="py-3 px-3.5 text-center w-24">Aksi</th>
+                                        <th className="py-3 px-3.5 text-right">Unit Price (Rp)</th>
+                                        <th className="py-3 px-3.5">Remarks</th>
+                                        <th className="py-3 px-3.5 text-center w-24">Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-slate-200">
                                     {items.length === 0 ? (
                                         <tr>
                                             <td colSpan={9} className="py-8 text-center text-slate-400">
-                                                Belum ada item barang dagang. Tambahkan item di atas.
+                                                No trade items added yet. Please add items above.
                                             </td>
                                         </tr>
                                     ) : (
@@ -538,7 +538,7 @@ export const PRTradeDummyForm: React.FC<PRTradeDummyFormProps> = ({ user, onBack
                                                                 type="button"
                                                                 onClick={() => handleDeleteItem(idx)}
                                                                 className="p-1.5 text-red-600 hover:bg-red-50 rounded-lg transition-colors cursor-pointer"
-                                                                title="Hapus"
+                                                                title="Delete"
                                                             >
                                                                 <Trash2 size={15} />
                                                             </button>
@@ -558,11 +558,11 @@ export const PRTradeDummyForm: React.FC<PRTradeDummyFormProps> = ({ user, onBack
                 {/* 4. SUBMISSION REMARK */}
                 <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 space-y-3">
                     <label className="block text-sm font-bold text-slate-800">
-                        Submission Remark (Catatan Pengajuan Dagang)
+                        Submission Remark
                     </label>
                     <textarea
                         rows={2}
-                        placeholder="Tambahkan catatan khusus untuk verifikator/approver jika diperlukan..."
+                        placeholder="Add special notes for verifier/approver if needed..."
                         value={submissionRemark}
                         onChange={(e) => setSubmissionRemark(e.target.value)}
                         className="w-full px-4 py-2.5 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-600 transition-all shadow-sm"
@@ -573,7 +573,7 @@ export const PRTradeDummyForm: React.FC<PRTradeDummyFormProps> = ({ user, onBack
                 <div className="bg-white rounded-2xl border border-slate-200 shadow-lg p-5 flex flex-col sm:flex-row items-center justify-between gap-4 sticky bottom-4 z-20">
                     <div className="text-sm text-slate-600 flex items-center gap-2">
                         <Info size={18} className="text-indigo-600 shrink-0" />
-                        <span>Form PR Trade saat ini dalam mode dummy untuk validasi konsep UX & UI dinamis.</span>
+                        <span>The PR Trade form is currently in dummy mode for dynamic UX & UI concept validation.</span>
                     </div>
 
                     <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full sm:w-auto shrink-0">
@@ -584,7 +584,7 @@ export const PRTradeDummyForm: React.FC<PRTradeDummyFormProps> = ({ user, onBack
                             className="flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl border border-amber-300 bg-amber-50 hover:bg-amber-100 text-amber-900 text-sm font-bold shadow-sm transition-colors cursor-pointer"
                         >
                             <Save size={18} />
-                            <span>Simpan Draft Trade</span>
+                            <span>Save Trade Draft</span>
                         </button>
 
                         {/* Submit Button Simulated */}
@@ -603,7 +603,7 @@ export const PRTradeDummyForm: React.FC<PRTradeDummyFormProps> = ({ user, onBack
                                 onClick={onBack}
                                 className="w-full sm:w-auto px-5 py-2.5 rounded-xl border border-slate-300 bg-white hover:bg-slate-50 text-sm font-semibold text-slate-700 transition-colors cursor-pointer text-center"
                             >
-                                Kembali
+                                Back
                             </button>
                         )}
                     </div>
@@ -614,7 +614,7 @@ export const PRTradeDummyForm: React.FC<PRTradeDummyFormProps> = ({ user, onBack
             {/* Master Search Modal */}
             <MasterSearchModal
                 isOpen={modalType !== null}
-                title={modalType === 'supplier' ? 'Pencarian Master Supplier Dagang' : 'Pencarian Master Produk Dagang (SKU)'}
+                title={modalType === 'supplier' ? 'Search Master Trade Supplier' : 'Search Master Trade Product (SKU)'}
                 onClose={() => setModalType(null)}
                 onSelect={handleSelectMaster}
                 fetchData={modalType === 'supplier' ? searchSupplierFn : searchProductFn}

@@ -57,7 +57,7 @@ export const MasterSearchModal: React.FC<MasterSearchModalProps> = ({
                 <div className="px-6 py-4 bg-blue-600 text-white flex items-center justify-between">
                     <div>
                         <h3 className="text-lg font-bold text-white">{title}</h3>
-                        <p className="text-xs text-slate-300">Cari & pilih master data dari tabel</p>
+                        <p className="text-xs text-slate-300">Search & select master data from the table</p>
                     </div>
                     <button
                         onClick={onClose}
@@ -73,7 +73,7 @@ export const MasterSearchModal: React.FC<MasterSearchModalProps> = ({
                         <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
                         <input
                             type="text"
-                            placeholder="Ketik kode atau nama untuk mencari..."
+                            placeholder="Type code or name to search..."
                             value={query}
                             onChange={(e) => setQuery(e.target.value)}
                             autoFocus
@@ -95,14 +95,14 @@ export const MasterSearchModal: React.FC<MasterSearchModalProps> = ({
                     {loading ? (
                         <div className="flex flex-col items-center justify-center py-12 text-slate-400 gap-2">
                             <Loader2 className="animate-spin text-blue-600" size={28} />
-                            <span className="text-sm">Memuat data...</span>
+                            <span className="text-sm">Loading data...</span>
                         </div>
                     ) : error ? (
                         <div className="text-center py-10 text-red-500 text-sm">{error}</div>
                     ) : items.length === 0 ? (
                         <div className="text-center py-12 text-slate-400">
-                            <p className="text-sm font-medium">Tidak ada data ditemukan</p>
-                            <p className="text-xs text-slate-400 mt-1">Coba gunakan kata kunci pencarian yang lain</p>
+                            <p className="text-sm font-medium">No data found</p>
+                            <p className="text-xs text-slate-400 mt-1">Try using a different search keyword</p>
                         </div>
                     ) : (
                         <div className="space-y-2">
@@ -147,7 +147,7 @@ export const MasterSearchModal: React.FC<MasterSearchModalProps> = ({
                                         )}
                                     </div>
                                     <div className="flex items-center gap-1 text-xs text-blue-600 font-semibold opacity-0 group-hover:opacity-100 transition-opacity">
-                                        <span>Pilih</span>
+                                        <span>Select</span>
                                         <Check size={16} />
                                     </div>
                                 </div>
@@ -162,7 +162,7 @@ export const MasterSearchModal: React.FC<MasterSearchModalProps> = ({
                         onClick={onClose}
                         className="px-4 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-200 rounded-lg transition-colors"
                     >
-                        Batal
+                        Cancel
                     </button>
                 </div>
             </div>
