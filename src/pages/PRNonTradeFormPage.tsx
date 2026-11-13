@@ -25,7 +25,7 @@ export const PRNonTradeFormPage: React.FC = () => {
 
     const handleSwitchPrType = (type: 'non_trade' | 'trade') => {
         if (id) {
-            toast.info('Draft Non-Trade ini tidak dapat diubah ke tipe Trade.');
+            toast.info('This Non-Trade draft cannot be changed to Trade type.');
             return;
         }
         setPrType(type);
@@ -104,7 +104,7 @@ export const PRNonTradeFormPage: React.FC = () => {
                 setSubmissionRemark(data.submission_remark || '');
                 setItems(data.items || []);
             } catch (err: any) {
-                toast.error('Gagal memuat data draft PR Non-Trade.');
+                toast.error('Failed to load PR Non-Trade draft data.');
             } finally {
                 setLoading(false);
             }
@@ -115,7 +115,7 @@ export const PRNonTradeFormPage: React.FC = () => {
     // Item handlers
     const handleAddItem = () => {
         if (!itemForm.goods_code || !itemForm.description) {
-            toast.error('Kode barang dan Nama barang wajib diisi!');
+            toast.error('Goods Code and Goods Name are required!');
             return;
         }
         if (editingItemIndex !== null) {
@@ -123,10 +123,10 @@ export const PRNonTradeFormPage: React.FC = () => {
             updated[editingItemIndex] = { ...itemForm };
             setItems(updated);
             setEditingItemIndex(null);
-            toast.info('Item berhasil diperbarui.');
+            toast.info('Item updated successfully.');
         } else {
             setItems([...items, { ...itemForm }]);
-            toast.info('Item berhasil ditambahkan.');
+            toast.info('Item added successfully.');
         }
         setItemForm({ goods_code: '', description: '', unit: 'PCS', quantity: 1, remark: '' });
     };
@@ -143,7 +143,7 @@ export const PRNonTradeFormPage: React.FC = () => {
             setEditingItemIndex(null);
             setItemForm({ goods_code: '', description: '', unit: 'PCS', quantity: 1, remark: '' });
         }
-        toast.info('Item dihapus.');
+        toast.info('Item removed.');
     };
 
     const handleCancelItemEdit = () => {
@@ -175,12 +175,12 @@ export const PRNonTradeFormPage: React.FC = () => {
             if (res.data?.transaction_id) {
                 setTransactionId(res.data.transaction_id);
             }
-            toast.success(res.message || 'Form berhasil disimpan sebagai Draft.');
+            toast.success(res.message || 'Form saved as Draft successfully.');
             if (res.data?.id && !id) {
                 navigate(`/pr-non-trade/${res.data.id}/edit`, { replace: true });
             }
         } catch (err: any) {
-            toast.error(typeof err === 'string' ? err : 'Gagal menyimpan draft.');
+            toast.error(typeof err === 'string' ? err : 'Failed to save draft.');
         } finally {
             setSavingDraft(false);
         }
@@ -190,11 +190,11 @@ export const PRNonTradeFormPage: React.FC = () => {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         if (!purpose.trim()) {
-            toast.error('Purpose (Tujuan pengajuan) wajib diisi!');
+            toast.error('Purpose is required!');
             return;
         }
         if (items.length === 0) {
-            toast.error('Detail items tidak boleh kosong! Tambahkan minimal 1 item.');
+            toast.error('Detail items cannot be empty! Please add at least 1 item.');
             return;
         }
 
@@ -217,12 +217,12 @@ export const PRNonTradeFormPage: React.FC = () => {
             };
 
             const res = await prNonTradeService.submitPR(formData);
-            toast.success(res.message || 'Pengajuan PR Non-Trade berhasil disubmit!');
+            toast.success(res.message || 'PR Non-Trade submitted successfully!');
             setTimeout(() => {
                 navigate('/');
             }, 1000);
         } catch (err: any) {
-            toast.error(typeof err === 'string' ? err : 'Gagal submit PR Non-Trade.');
+            toast.error(typeof err === 'string' ? err : 'Failed to submit PR Non-Trade.');
         } finally {
             setSubmitting(false);
         }
@@ -232,13 +232,13 @@ export const PRNonTradeFormPage: React.FC = () => {
     const handleSelectMasterItem = (item: MasterItem) => {
         if (modalType === 'asset') {
             setAssetNo(item.code);
-            toast.info(`Asset dipilih: ${item.code} - ${item.name}`);
+            toast.info(`Selected Asset: ${item.code} - ${item.name}`);
         } else if (modalType === 'wbs') {
             setWbsNo(item.code);
-            toast.info(`WBS dipilih: ${item.code} - ${item.description}`);
+            toast.info(`Selected WBS: ${item.code} - ${item.description}`);
         } else if (modalType === 'equipment') {
             setEquipmentName(item.name || item.code);
-            toast.info(`Equipment dipilih: ${item.name || item.code}`);
+            toast.info(`Selected Equipment: ${item.name || item.code}`);
         } else if (modalType === 'goods') {
             setItemForm((prev) => ({
                 ...prev,
@@ -246,10 +246,10 @@ export const PRNonTradeFormPage: React.FC = () => {
                 description: item.description || '',
                 unit: item.unit || 'PCS'
             }));
-            toast.info(`Goods dipilih: ${item.code} - ${item.name}`);
+            toast.info(`Selected Goods: ${item.code} - ${item.name}`);
         } else if (modalType === 'car_number') {
             setCarTbrNo(item.code);
-            toast.info(`CAR / TBR dipilih: ${item.code}${item.description ? ` - ${item.description}` : ''}`);
+            toast.info(`Selected CAR / TBR: ${item.code}${item.description ? ` - ${item.description}` : ''}`);
         }
     };
 
@@ -263,11 +263,11 @@ export const PRNonTradeFormPage: React.FC = () => {
     };
 
     const getModalTitle = () => {
-        if (modalType === 'asset') return 'Pencarian Master Asset';
-        if (modalType === 'wbs') return 'Pencarian Master WBS';
-        if (modalType === 'equipment') return 'Pencarian Master Equipment';
-        if (modalType === 'goods') return 'Pencarian Master Goods / Barang';
-        if (modalType === 'car_number') return 'Pencarian Master CAR / TBR No';
+        if (modalType === 'asset') return 'Search Master Asset';
+        if (modalType === 'wbs') return 'Search Master WBS';
+        if (modalType === 'equipment') return 'Search Master Equipment';
+        if (modalType === 'goods') return 'Search Master Goods';
+        if (modalType === 'car_number') return 'Search Master CAR / TBR No';
         return '';
     };
 
@@ -275,7 +275,7 @@ export const PRNonTradeFormPage: React.FC = () => {
         return (
             <div className="flex flex-col items-center justify-center min-h-[60vh] gap-3 text-slate-500">
                 <Loader2 size={36} className="animate-spin text-blue-600" />
-                <span className="text-sm font-medium">Memuat form PR Non-Trade...</span>
+                <span className="text-sm font-medium">Loading PR Non-Trade form...</span>
             </div>
         );
     }
@@ -291,7 +291,7 @@ export const PRNonTradeFormPage: React.FC = () => {
                     <div>
                         <div className="flex items-center gap-3">
                             <h1 className="text-xl md:text-2xl font-bold tracking-tight">
-                                {prType === 'trade' ? 'Formulir PR Trade' : 'Formulir PR Non-Trade'}
+                                {prType === 'trade' ? 'PR Trade Form' : 'PR Non-Trade Form'}
                             </h1>
                         </div>
                     </div>
@@ -303,7 +303,7 @@ export const PRNonTradeFormPage: React.FC = () => {
                     className="flex items-center gap-2 px-4 py-2 bg-slate-800 hover:bg-slate-700 text-white rounded-xl text-sm font-semibold border border-slate-700 transition-colors w-fit"
                 >
                     <ArrowLeft size={18} />
-                    Kembali
+                    Back
                 </button>
             </div>
 
@@ -329,7 +329,7 @@ export const PRNonTradeFormPage: React.FC = () => {
                                 <span className="font-bold text-slate-900 text-xl">PR Non-Trade</span>
                                 {prType === 'non_trade' && (
                                     <span className="px-2 py-0.5 rounded-full text-[11px] font-bold bg-blue-600 text-white">
-                                        Aktif
+                                        Active
                                     </span>
                                 )}
                             </div>
@@ -355,7 +355,7 @@ export const PRNonTradeFormPage: React.FC = () => {
                                 <span className="font-bold text-slate-900 text-xl">PR Trade</span>
                                 {prType === 'trade' && (
                                     <span className="px-2 py-0.5 rounded-full text-[11px] font-bold bg-indigo-600 text-white">
-                                        Aktif
+                                        Active
                                     </span>
                                 )}
                             </div>
@@ -387,7 +387,7 @@ export const PRNonTradeFormPage: React.FC = () => {
                                 </label>
                                 <input
                                     type="text"
-                                    value={transactionId || '(Otomatis saat disimpan)'}
+                                    value={transactionId || '(Auto-generated upon save)'}
                                     readOnly
                                     className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-mono font-bold text-slate-700 shadow-xs cursor-default select-all"
                                 />
@@ -477,7 +477,7 @@ export const PRNonTradeFormPage: React.FC = () => {
                                 <textarea
                                     rows={3}
                                     required
-                                    placeholder="Jelaskan tujuan pengajuan PR Non-Trade ini secara singkat dan jelas..."
+                                    placeholder="Briefly and clearly describe the purpose of this PR Non-Trade submission..."
                                     value={purpose}
                                     onChange={(e) => setPurpose(e.target.value)}
                                     className="w-full px-4 py-2.5 bg-white border border-slate-300 rounded-xl text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600 transition-colors placeholder:text-slate-400 shadow-sm"
@@ -491,7 +491,7 @@ export const PRNonTradeFormPage: React.FC = () => {
                                     <input
                                         type="text"
                                         required
-                                        placeholder="Cari / masukkan CAR/TBR No..."
+                                        placeholder="Search / enter CAR/TBR No..."
                                         value={carTbrNo}
                                         onChange={(e) => setCarTbrNo(e.target.value)}
                                         className="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-600 shadow-sm"
@@ -500,7 +500,7 @@ export const PRNonTradeFormPage: React.FC = () => {
                                         type="button"
                                         onClick={() => setModalType('car_number')}
                                         className="px-3.5 py-2.5 bg-blue-600 text-white hover:bg-blue-700 border border-transparent rounded-xl transition-colors cursor-pointer shrink-0 font-medium text-sm flex items-center gap-1.5 shadow-xs"
-                                        title="Cari Master CAR / TBR No"
+                                        title="Search Master CAR / TBR No"
                                     >
                                         <Search size={16} />
                                     </button>
@@ -641,7 +641,7 @@ export const PRNonTradeFormPage: React.FC = () => {
                                                     <input
                                                         type="text"
                                                         required
-                                                        placeholder="Cari / masukkan Asset No..."
+                                                        placeholder="Search / enter Asset No..."
                                                         value={assetNo}
                                                         onChange={(e) => setAssetNo(e.target.value)}
                                                         className="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-600 shadow-sm"
@@ -650,7 +650,7 @@ export const PRNonTradeFormPage: React.FC = () => {
                                                         type="button"
                                                         onClick={() => setModalType('asset')}
                                                         className="px-3.5 py-2.5 bg-blue-600 text-white hover:bg-blue-700 border border-transparent rounded-xl transition-colors cursor-pointer shrink-0 font-medium text-sm flex items-center gap-1.5 shadow-xs"
-                                                        title="Cari Master Asset"
+                                                        title="Search Master Asset"
                                                     >
                                                         <Search size={16} />
                                                     </button>
@@ -668,7 +668,7 @@ export const PRNonTradeFormPage: React.FC = () => {
                                                     <input
                                                         type="text"
                                                         required
-                                                        placeholder="Cari / masukkan WBS No..."
+                                                        placeholder="Search / enter WBS No..."
                                                         value={wbsNo}
                                                         onChange={(e) => setWbsNo(e.target.value)}
                                                         className="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-600 shadow-sm font-mono"
@@ -677,7 +677,7 @@ export const PRNonTradeFormPage: React.FC = () => {
                                                         type="button"
                                                         onClick={() => setModalType('wbs')}
                                                         className="px-3.5 py-2.5 bg-blue-600 text-white hover:bg-blue-700 border border-transparent rounded-xl transition-colors cursor-pointer shrink-0 font-medium text-sm flex items-center gap-1.5 shadow-xs"
-                                                        title="Cari Master WBS"
+                                                        title="Search Master WBS"
                                                     >
                                                         <Search size={16} />
                                                     </button>
@@ -693,7 +693,7 @@ export const PRNonTradeFormPage: React.FC = () => {
                                             <div className="flex gap-2">
                                                 <input
                                                     type="text"
-                                                    placeholder="Cari / nama peralatan aset..."
+                                                    placeholder="Search / enter asset equipment name..."
                                                     required
                                                     value={equipmentName}
                                                     onChange={(e) => setEquipmentName(e.target.value)}
@@ -703,7 +703,7 @@ export const PRNonTradeFormPage: React.FC = () => {
                                                     type="button"
                                                     onClick={() => setModalType('equipment')}
                                                     className="px-3 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 rounded-xl transition-colors cursor-pointer shrink-0"
-                                                    title="Cari Master Equipment"
+                                                    title="Search Master Equipment"
                                                 >
                                                     <Search size={16} />
                                                 </button>
@@ -719,12 +719,12 @@ export const PRNonTradeFormPage: React.FC = () => {
                                 {purchaseType === 'non_asset' && (
                                     <div>
                                         <label className="block text-sm font-semibold text-slate-700 mb-2">
-                                            Equipment / Nama Peralatan Operasional
+                                            Operational Equipment Name
                                         </label>
                                         <div className="flex gap-2">
                                             <input
                                                 type="text"
-                                                placeholder="Nama peralatan operasional (opsional)..."
+                                                placeholder="Operational equipment name (optional)..."
                                                 value={equipmentName}
                                                 onChange={(e) => setEquipmentName(e.target.value)}
                                                 className="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-600 shadow-sm"
@@ -733,7 +733,7 @@ export const PRNonTradeFormPage: React.FC = () => {
                                                 type="button"
                                                 onClick={() => setModalType('equipment')}
                                                 className="px-3 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 rounded-xl transition-colors cursor-pointer shrink-0"
-                                                title="Cari Master Equipment"
+                                                title="Search Master Equipment"
                                             >
                                                 <Search size={16} />
                                             </button>
@@ -751,7 +751,7 @@ export const PRNonTradeFormPage: React.FC = () => {
                                 <Package size={20} className="text-blue-600" />
                                 <span>Detail Items</span>
                                 <span className="text-sm px-2.5 py-1 rounded-full bg-blue-100 text-blue-800 font-semibold">
-                                    {items.length} item
+                                    {items.length} items
                                 </span>
                             </div>
                         </div>
@@ -762,7 +762,7 @@ export const PRNonTradeFormPage: React.FC = () => {
                             <div className="bg-slate-50 border border-slate-200 rounded-xl p-5 space-y-4">
                                 <div className="text-sm font-bold text-slate-800 flex items-center gap-2">
                                     <Plus size={18} className="text-blue-600" />
-                                    <span>{editingItemIndex !== null ? 'Edit Item Line' : 'Tambah Item Baru'}</span>
+                                    <span>{editingItemIndex !== null ? 'Edit Item Line' : 'Add New Item'}</span>
                                 </div>
 
                                 <div className="grid grid-cols-1 md:grid-cols-12 gap-4">
@@ -774,7 +774,7 @@ export const PRNonTradeFormPage: React.FC = () => {
                                         <div className="flex gap-1.5">
                                             <input
                                                 type="text"
-                                                placeholder="Kode barang..."
+                                                placeholder="Goods code..."
                                                 value={itemForm.goods_code}
                                                 onChange={(e) => setItemForm({ ...itemForm, goods_code: e.target.value })}
                                                 className="w-full px-3.5 py-2 bg-white border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-600 shadow-sm"
@@ -783,7 +783,7 @@ export const PRNonTradeFormPage: React.FC = () => {
                                                 type="button"
                                                 onClick={() => setModalType('goods')}
                                                 className="px-3 py-2 bg-blue-100 text-blue-800 hover:bg-blue-200 rounded-xl text-sm font-medium transition-colors cursor-pointer shrink-0"
-                                                title="Cari Master Goods"
+                                                title="Search Master Goods"
                                             >
                                                 <Search size={16} />
                                             </button>
@@ -797,7 +797,7 @@ export const PRNonTradeFormPage: React.FC = () => {
                                         </label>
                                         <input
                                             type="text"
-                                            placeholder="Nama barang / deskripsi..."
+                                            placeholder="Goods name / description..."
                                             value={itemForm.description}
                                             onChange={(e) => setItemForm({ ...itemForm, description: e.target.value })}
                                             className="w-full px-3.5 py-2 bg-white border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-600 shadow-sm"
@@ -838,11 +838,11 @@ export const PRNonTradeFormPage: React.FC = () => {
                                     {/* Remark */}
                                     <div className="md:col-span-9">
                                         <label className="block text-sm font-semibold text-slate-700 mb-1.5">
-                                            Remark (Catatan Item)
+                                            Item Remark
                                         </label>
                                         <input
                                             type="text"
-                                            placeholder="Catatan spesifikasi/kebutuhan item..."
+                                            placeholder="Item specification / requirement notes..."
                                             value={itemForm.remark}
                                             onChange={(e) => setItemForm({ ...itemForm, remark: e.target.value })}
                                             className="w-full px-3.5 py-2 bg-white border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-600 shadow-sm"
@@ -857,7 +857,7 @@ export const PRNonTradeFormPage: React.FC = () => {
                                             className="flex-1 flex items-center justify-center gap-1.5 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-sm font-semibold shadow-sm transition-colors cursor-pointer"
                                         >
                                             <Save size={16} />
-                                            <span>{editingItemIndex !== null ? 'Simpan Item' : 'Tambah Item'}</span>
+                                            <span>{editingItemIndex !== null ? 'Save Item' : 'Add Item'}</span>
                                         </button>
                                         {editingItemIndex !== null && (
                                             <button
@@ -883,14 +883,14 @@ export const PRNonTradeFormPage: React.FC = () => {
                                             <th className="py-3.5 px-4 text-center">Unit</th>
                                             <th className="py-3.5 px-4 text-right">Quantity</th>
                                             <th className="py-3.5 px-4">Remark</th>
-                                            <th className="py-3.5 px-4 text-center w-28">Aksi</th>
+                                            <th className="py-3.5 px-4 text-center w-28">Actions</th>
                                         </tr>
                                     </thead>
                                     <tbody className="divide-y divide-slate-200">
                                         {items.length === 0 ? (
                                             <tr>
                                                 <td colSpan={7} className="py-8 text-center text-slate-500 text-sm">
-                                                    Belum ada item ditambahkan. Gunakan form di atas untuk menambah item.
+                                                    No items added yet. Use the form above to add items.
                                                 </td>
                                             </tr>
                                         ) : (
@@ -920,7 +920,7 @@ export const PRNonTradeFormPage: React.FC = () => {
                                                                 type="button"
                                                                 onClick={() => handleDeleteItem(idx)}
                                                                 className="p-1.5 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
-                                                                title="Hapus item"
+                                                                title="Delete item"
                                                             >
                                                                 <Trash2 size={16} />
                                                             </button>
@@ -939,11 +939,11 @@ export const PRNonTradeFormPage: React.FC = () => {
                     {/* 4. SUBMISSION REMARK CARD */}
                     <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-6 space-y-3">
                         <label className="block text-sm font-bold text-slate-800">
-                            Submission Remark (Catatan Pengajuan)
+                            Submission Remark
                         </label>
                         <textarea
                             rows={3}
-                            placeholder="Tambahkan catatan khusus untuk verifikator/approver jika diperlukan..."
+                            placeholder="Add special notes for verifier/approver if needed..."
                             value={submissionRemark}
                             onChange={(e) => setSubmissionRemark(e.target.value)}
                             className="w-full px-4 py-2.5 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-600 transition-all placeholder:text-slate-400 shadow-sm"
@@ -954,7 +954,7 @@ export const PRNonTradeFormPage: React.FC = () => {
                     <div className="bg-white rounded-xl border border-slate-200 shadow-lg p-5 flex flex-col sm:flex-row items-center justify-between gap-4 sticky bottom-4 z-20">
                         <div className="text-sm text-slate-600 flex items-center gap-2">
                             <Info size={18} className="text-blue-600 shrink-0" />
-                            <span>Form ini dapat disimpan sebagai Draft terlebih dahulu sebelum disubmit ke workflow approval.</span>
+                            <span>This form can be saved as a Draft first before being submitted to the approval workflow.</span>
                         </div>
 
                         <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full sm:w-auto shrink-0">

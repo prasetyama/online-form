@@ -104,7 +104,7 @@ export const AppDrawer = ({ modules: initialModules = [], currentModuleCode = 'P
                         <div className="p-3 max-h-80 overflow-y-auto">
                             {fetchedModules.length === 0 ? (
                                 <div className="px-4 py-6 text-center text-sm text-slate-400">
-                                    Tidak ada modul aplikasi lain.
+                                    No other application modules available.
                                 </div>
                             ) : (
                                 <div className="grid grid-cols-3 gap-2">

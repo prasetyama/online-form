@@ -26,7 +26,7 @@ export const PRDetailPage: React.FC = () => {
                 const data = await prNonTradeService.getDetail(id);
                 setPr(data);
             } catch (err: any) {
-                toast.error('Gagal memuat detail PR.');
+                toast.error('Failed to load PR details.');
             } finally {
                 setLoading(false);
             }
@@ -38,7 +38,7 @@ export const PRDetailPage: React.FC = () => {
         return (
             <div className="flex flex-col items-center justify-center min-h-[60vh] gap-3 text-slate-500">
                 <Loader2 size={36} className="animate-spin text-blue-600" />
-                <span className="text-sm font-medium">Memuat detail PR...</span>
+                <span className="text-sm font-medium">Loading PR details...</span>
             </div>
         );
     }
@@ -46,12 +46,12 @@ export const PRDetailPage: React.FC = () => {
     if (!pr) {
         return (
             <div className="max-w-4xl mx-auto py-12 text-center">
-                <p className="text-slate-600 font-semibold">Data PR tidak ditemukan.</p>
+                <p className="text-slate-600 font-semibold">PR data not found.</p>
                 <button
                     onClick={() => navigate('/')}
                     className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-xl text-sm font-medium"
                 >
-                    Kembali ke Daftar
+                    Back to List
                 </button>
             </div>
         );
@@ -68,7 +68,7 @@ export const PRDetailPage: React.FC = () => {
                     <div>
                         <div className="flex items-center gap-3">
                             <h1 className="text-xl md:text-2xl font-bold text-slate-900 tracking-tight">
-                                Detail Purchase Request
+                                Purchase Request Detail
                             </h1>
                             <span className={`px-2.5 py-0.5 rounded-full text-sm font-bold ${pr.status === 'APPROVED' ? 'bg-emerald-100 text-emerald-800 border border-emerald-200' :
                                 pr.status === 'REJECTED' ? 'bg-rose-100 text-rose-800 border border-rose-200' :
@@ -93,7 +93,7 @@ export const PRDetailPage: React.FC = () => {
                             className="flex items-center gap-2 px-4 py-2.5 bg-amber-600 hover:bg-amber-700 text-white rounded-xl text-sm font-semibold transition-colors cursor-pointer"
                         >
                             <Edit3 size={16} />
-                            <span>Edit / Revisi Pengajuan</span>
+                            <span>Edit / Revise Submission</span>
                         </button>
                     ) : null}
                     {pr.approval_request && (
@@ -114,7 +114,7 @@ export const PRDetailPage: React.FC = () => {
                         className="flex items-center gap-1.5 px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-sm font-semibold transition-colors cursor-pointer"
                     >
                         <ArrowLeft size={16} />
-                        <span>Kembali</span>
+                        <span>Back</span>
                     </button>
                 </div>
             </div>
@@ -123,7 +123,7 @@ export const PRDetailPage: React.FC = () => {
             <div className="bg-white rounded-2xl border border-slate-200/80 shadow-xs p-6 space-y-4">
                 <div className="flex items-center gap-2 text-slate-800 font-bold text-sm border-b border-slate-100 pb-3">
                     <User size={18} className="text-blue-600" />
-                    <span>Informasi Requestor & Transaksi</span>
+                    <span>Requestor & Transaction Information</span>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
                     <div>
@@ -131,7 +131,7 @@ export const PRDetailPage: React.FC = () => {
                         <p className="font-mono font-bold text-sm text-blue-700 mt-1">{pr.transaction_id || '-'}</p>
                     </div>
                     <div>
-                        <span className="text-sm font-semibold text-slate-400 block uppercase tracking-wider">Tanggal Pengajuan</span>
+                        <span className="text-sm font-semibold text-slate-400 block uppercase tracking-wider">Submission Date</span>
                         <p className="font-medium text-sm text-slate-800 mt-1">{pr.transaction_date || '-'}</p>
                     </div>
                     <div>

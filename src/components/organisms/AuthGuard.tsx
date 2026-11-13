@@ -14,8 +14,8 @@ export const AuthGuard: React.FC<{ children: React.ReactNode }> = ({ children })
                     <Loader2 size={24} className="absolute text-blue-600 animate-pulse" />
                 </div>
                 <div className="text-center">
-                    <p className="text-sm font-semibold text-slate-800">Memverifikasi Sesi SSO...</p>
-                    <p className="text-xs text-slate-400 mt-1">Menghubungkan ke Centralized SSO & Approval Backend</p>
+                    <p className="text-sm font-semibold text-slate-800">Verifying SSO Session...</p>
+                    <p className="text-xs text-slate-400 mt-1">Connecting to Centralized SSO & Approval Backend</p>
                 </div>
             </div>
         );
