@@ -479,14 +479,8 @@ export const PRNonTradeListPage: React.FC = () => {
 
                         {/* Pagination Footer */}
                         <div className="flex flex-col sm:flex-row items-center justify-between gap-4 py-3.5 px-4 bg-white border-t border-slate-200/80 text-sm text-slate-600">
-                            <div className="flex flex-wrap items-center gap-3">
-                                <span>
-                                    Showing <strong className="font-semibold text-slate-900">{totalItems === 0 ? 0 : startIndex + 1}</strong> -{' '}
-                                    <strong className="font-semibold text-slate-900">{endIndex}</strong> of{' '}
-                                    <strong className="font-semibold text-slate-900">{totalItems}</strong> rows
-                                </span>
-
-                                <div className="flex items-center gap-1.5 ml-2 border-l border-slate-200 pl-3">
+                            <div className="flex flex-row md:flex-row sm:flex-row items-center gap-3">
+                                <div className="flex items-center gap-1.5">
                                     <label htmlFor="pr-limit-select" className="text-xs text-slate-500">
                                         Limit:
                                     </label>
@@ -505,6 +499,11 @@ export const PRNonTradeListPage: React.FC = () => {
                                             </option>
                                         ))}
                                     </select>
+                                </div>
+                                <div className="ml-2 border-l border-slate-200 pl-3">
+                                    Showing <strong className="font-semibold text-slate-900">{totalItems === 0 ? 0 : startIndex + 1}</strong> -{' '}
+                                    <strong className="font-semibold text-slate-900">{endIndex}</strong> of{' '}
+                                    <strong className="font-semibold text-slate-900">{totalItems}</strong> rows
                                 </div>
                             </div>
 

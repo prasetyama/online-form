@@ -49,13 +49,6 @@ export const Sidebar: React.FC<SidebarProps> = ({
             )}
         >
             <div className="flex flex-col flex-1 h-0 px-3 py-4 relative">
-                {/* Mobile Close Button */}
-                <button
-                    className="absolute top-4 -right-12 lg:hidden p-2 text-white bg-slate-900/80 rounded-xl cursor-pointer"
-                    onClick={() => setIsMobileOpen(false)}
-                >
-                    <X size={24} />
-                </button>
 
                 {/* App Brand Header */}
                 <div className={cn("mb-6 flex items-center py-2", isExpanded ? "px-2" : "justify-center")}>
