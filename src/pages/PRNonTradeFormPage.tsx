@@ -50,10 +50,14 @@ export const PRNonTradeFormPage: React.FC = () => {
     const [goodsServiceType, setGoodsServiceType] = useState<'lumpsum' | 'not_lumpsum'>('not_lumpsum');
     const [purchaseType, setPurchaseType] = useState<'asset' | 'non_asset'>('non_asset');
     const [carTbrNo, setCarTbrNo] = useState('');
+    const [carTbrDesc, setCarTbrDesc] = useState('');
     const [assetType, setAssetType] = useState<'non_wbs' | 'wbs'>('non_wbs');
     const [assetNo, setAssetNo] = useState('');
+    const [assetDesc, setAssetDesc] = useState('');
     const [wbsNo, setWbsNo] = useState('');
+    const [wbsDesc, setWbsDesc] = useState('');
     const [equipmentName, setEquipmentName] = useState('');
+    const [equipmentDesc, setEquipmentDesc] = useState('');
     const [submissionRemark, setSubmissionRemark] = useState('');
 
     // Items list
@@ -103,6 +107,36 @@ export const PRNonTradeFormPage: React.FC = () => {
                 setEquipmentName(data.equipment_name || '');
                 setSubmissionRemark(data.submission_remark || '');
                 setItems(data.items || []);
+
+                // Auto-resolve descriptions for master data
+                if (data.car_tbr_no) {
+                    prNonTradeService.searchCarNumbers(data.car_tbr_no).then(res => {
+                        const list = Array.isArray(res) ? res : res.results || [];
+                        const match = list.find(i => i.code === data.car_tbr_no);
+                        if (match) setCarTbrDesc(match.description || match.name || '');
+                    }).catch(() => {});
+                }
+                if (data.asset_no) {
+                    prNonTradeService.searchAssets(data.asset_no).then(res => {
+                        const list = Array.isArray(res) ? res : res.results || [];
+                        const match = list.find(i => i.code === data.asset_no);
+                        if (match) setAssetDesc(match.name || match.description || '');
+                    }).catch(() => {});
+                }
+                if (data.wbs_no) {
+                    prNonTradeService.searchWBS(data.wbs_no).then(res => {
+                        const list = Array.isArray(res) ? res : res.results || [];
+                        const match = list.find(i => i.code === data.wbs_no);
+                        if (match) setWbsDesc(match.description || match.name || '');
+                    }).catch(() => {});
+                }
+                if (data.equipment_name) {
+                    prNonTradeService.searchEquipments(data.equipment_name).then(res => {
+                        const list = Array.isArray(res) ? res : res.results || [];
+                        const match = list.find(i => (i.name || i.code) === data.equipment_name || i.code === data.equipment_name);
+                        if (match) setEquipmentDesc(match.description || (match.plant ? `Plant: ${match.plant}` : '') || '');
+                    }).catch(() => {});
+                }
             } catch (err: any) {
                 toast.error('Failed to load PR Non-Trade draft data.');
             } finally {
@@ -232,23 +266,27 @@ export const PRNonTradeFormPage: React.FC = () => {
     const handleSelectMasterItem = (item: MasterItem) => {
         if (modalType === 'asset') {
             setAssetNo(item.code);
-            toast.info(`Selected Asset: ${item.code} - ${item.name}`);
+            setAssetDesc(item.name || item.description || '');
+            toast.info(`Selected Asset: ${item.code} - ${item.name || item.description || ''}`);
         } else if (modalType === 'wbs') {
             setWbsNo(item.code);
-            toast.info(`Selected WBS: ${item.code} - ${item.description}`);
+            setWbsDesc(item.description || item.name || '');
+            toast.info(`Selected WBS: ${item.code} - ${item.description || item.name || ''}`);
         } else if (modalType === 'equipment') {
             setEquipmentName(item.name || item.code);
+            setEquipmentDesc(item.description || (item.plant ? `Plant: ${item.plant}` : '') || (item.code !== item.name ? item.code : '') || '');
             toast.info(`Selected Equipment: ${item.name || item.code}`);
         } else if (modalType === 'goods') {
             setItemForm((prev) => ({
                 ...prev,
                 goods_code: item.code,
-                description: item.description || '',
+                description: item.description || item.name || '',
                 unit: item.unit || 'PCS'
             }));
-            toast.info(`Selected Goods: ${item.code} - ${item.name}`);
+            toast.info(`Selected Goods: ${item.code} - ${item.name || item.description || ''}`);
         } else if (modalType === 'car_number') {
             setCarTbrNo(item.code);
+            setCarTbrDesc(item.description || item.name || '');
             toast.info(`Selected CAR / TBR: ${item.code}${item.description ? ` - ${item.description}` : ''}`);
         }
     };
@@ -493,7 +531,10 @@ export const PRNonTradeFormPage: React.FC = () => {
                                         required
                                         placeholder="Search / enter CAR/TBR No..."
                                         value={carTbrNo}
-                                        onChange={(e) => setCarTbrNo(e.target.value)}
+                                        onChange={(e) => {
+                                            setCarTbrNo(e.target.value);
+                                            if (!e.target.value) setCarTbrDesc('');
+                                        }}
                                         className="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-600 shadow-sm"
                                     />
                                     <button
@@ -505,6 +546,12 @@ export const PRNonTradeFormPage: React.FC = () => {
                                         <Search size={16} />
                                     </button>
                                 </div>
+                                {carTbrDesc && (
+                                    <div className="mt-1.5 flex items-center gap-1.5 text-xs bg-slate-50 border border-slate-200/80 px-2.5 py-1 rounded-lg text-slate-700 animate-fade-in">
+                                        <span className="text-slate-400 font-medium shrink-0">Description:</span>
+                                        <span className="font-semibold text-slate-800 truncate" title={carTbrDesc}>{carTbrDesc}</span>
+                                    </div>
+                                )}
                             </div>
 
                             {/* Radio Selection Group Row */}
@@ -643,7 +690,10 @@ export const PRNonTradeFormPage: React.FC = () => {
                                                         required
                                                         placeholder="Search / enter Asset No..."
                                                         value={assetNo}
-                                                        onChange={(e) => setAssetNo(e.target.value)}
+                                                        onChange={(e) => {
+                                                            setAssetNo(e.target.value);
+                                                            if (!e.target.value) setAssetDesc('');
+                                                        }}
                                                         className="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-600 shadow-sm"
                                                     />
                                                     <button
@@ -655,6 +705,12 @@ export const PRNonTradeFormPage: React.FC = () => {
                                                         <Search size={16} />
                                                     </button>
                                                 </div>
+                                                {assetDesc && (
+                                                    <div className="mt-1.5 flex items-center gap-1.5 text-xs bg-slate-50 border border-slate-200/80 px-2.5 py-1 rounded-lg text-slate-700 animate-fade-in">
+                                                        <span className="text-slate-400 font-medium shrink-0">Description:</span>
+                                                        <span className="font-semibold text-slate-800 truncate" title={assetDesc}>{assetDesc}</span>
+                                                    </div>
+                                                )}
                                             </div>
                                         )}
 
@@ -670,7 +726,10 @@ export const PRNonTradeFormPage: React.FC = () => {
                                                         required
                                                         placeholder="Search / enter WBS No..."
                                                         value={wbsNo}
-                                                        onChange={(e) => setWbsNo(e.target.value)}
+                                                        onChange={(e) => {
+                                                            setWbsNo(e.target.value);
+                                                            if (!e.target.value) setWbsDesc('');
+                                                        }}
                                                         className="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-600 shadow-sm font-mono"
                                                     />
                                                     <button
@@ -682,6 +741,12 @@ export const PRNonTradeFormPage: React.FC = () => {
                                                         <Search size={16} />
                                                     </button>
                                                 </div>
+                                                {wbsDesc && (
+                                                    <div className="mt-1.5 flex items-center gap-1.5 text-xs bg-slate-50 border border-slate-200/80 px-2.5 py-1 rounded-lg text-slate-700 animate-fade-in">
+                                                        <span className="text-slate-400 font-medium shrink-0">Description:</span>
+                                                        <span className="font-semibold text-slate-800 truncate" title={wbsDesc}>{wbsDesc}</span>
+                                                    </div>
+                                                )}
                                             </div>
                                         )}
 
@@ -696,7 +761,10 @@ export const PRNonTradeFormPage: React.FC = () => {
                                                     placeholder="Search / enter asset equipment name..."
                                                     required
                                                     value={equipmentName}
-                                                    onChange={(e) => setEquipmentName(e.target.value)}
+                                                    onChange={(e) => {
+                                                        setEquipmentName(e.target.value);
+                                                        if (!e.target.value) setEquipmentDesc('');
+                                                    }}
                                                     className="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-600 shadow-sm"
                                                 />
                                                 <button
@@ -708,6 +776,12 @@ export const PRNonTradeFormPage: React.FC = () => {
                                                     <Search size={16} />
                                                 </button>
                                             </div>
+                                            {equipmentDesc && (
+                                                <div className="mt-1.5 flex items-center gap-1.5 text-xs bg-slate-50 border border-slate-200/80 px-2.5 py-1 rounded-lg text-slate-700 animate-fade-in">
+                                                    <span className="text-slate-400 font-medium shrink-0">Description:</span>
+                                                    <span className="font-semibold text-slate-800 truncate" title={equipmentDesc}>{equipmentDesc}</span>
+                                                </div>
+                                            )}
                                         </div>
                                     </div>
                                 </div>
@@ -726,7 +800,10 @@ export const PRNonTradeFormPage: React.FC = () => {
                                                 type="text"
                                                 placeholder="Operational equipment name (optional)..."
                                                 value={equipmentName}
-                                                onChange={(e) => setEquipmentName(e.target.value)}
+                                                onChange={(e) => {
+                                                    setEquipmentName(e.target.value);
+                                                    if (!e.target.value) setEquipmentDesc('');
+                                                }}
                                                 className="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-600 shadow-sm"
                                             />
                                             <button
@@ -738,6 +815,12 @@ export const PRNonTradeFormPage: React.FC = () => {
                                                 <Search size={16} />
                                             </button>
                                         </div>
+                                        {equipmentDesc && (
+                                            <div className="mt-1.5 flex items-center gap-1.5 text-xs bg-slate-50 border border-slate-200/80 px-2.5 py-1 rounded-lg text-slate-700 animate-fade-in">
+                                                <span className="text-slate-400 font-medium shrink-0">Description:</span>
+                                                <span className="font-semibold text-slate-800 truncate" title={equipmentDesc}>{equipmentDesc}</span>
+                                            </div>
+                                        )}
                                     </div>
                                 )}
                             </div>
