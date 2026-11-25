@@ -360,9 +360,13 @@ export const PRNonTradeListPage: React.FC = () => {
                                                         {item.transaction_id}
                                                     </button>
                                                 ) : (
-                                                    <span className="text-amber-700 font-medium italic text-sm bg-amber-50 px-2 py-0.5 rounded-md border border-amber-200">
-                                                        Draft (Unassigned)
-                                                    </span>
+                                                    <button
+                                                        onClick={() => navigate(`/${item.id}/edit`)}
+                                                        className="text-amber-700 font-medium italic text-sm bg-amber-50 hover:bg-amber-100 px-2 py-0.5 rounded-md border border-amber-200 cursor-pointer text-left transition-colors"
+                                                        title="Edit Draft"
+                                                    >
+                                                        Draft (Belum ada ID)
+                                                    </button>
                                                 )}
                                             </td>
                                             <td className="py-3.5 px-4 text-slate-500 font-medium text-sm whitespace-nowrap">
