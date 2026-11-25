@@ -112,28 +112,28 @@ export const PRNonTradeFormPage: React.FC = () => {
                 if (data.car_tbr_no) {
                     prNonTradeService.searchCarNumbers(data.car_tbr_no).then(res => {
                         const list = Array.isArray(res) ? res : res.results || [];
-                        const match = list.find(i => i.code === data.car_tbr_no);
+                        const match = list.find(i => String(i.code).trim() === String(data.car_tbr_no).trim()) || list[0];
                         if (match) setCarTbrDesc(match.description || match.name || '');
                     }).catch(() => {});
                 }
                 if (data.asset_no) {
                     prNonTradeService.searchAssets(data.asset_no).then(res => {
                         const list = Array.isArray(res) ? res : res.results || [];
-                        const match = list.find(i => i.code === data.asset_no);
-                        if (match) setAssetDesc(match.name || match.description || '');
+                        const match = list.find(i => String(i.code).trim() === String(data.asset_no).trim()) || list[0];
+                        if (match) setAssetDesc(match.description || match.name || match.category || '');
                     }).catch(() => {});
                 }
                 if (data.wbs_no) {
                     prNonTradeService.searchWBS(data.wbs_no).then(res => {
                         const list = Array.isArray(res) ? res : res.results || [];
-                        const match = list.find(i => i.code === data.wbs_no);
+                        const match = list.find(i => String(i.code).trim() === String(data.wbs_no).trim()) || list[0];
                         if (match) setWbsDesc(match.description || match.name || '');
                     }).catch(() => {});
                 }
                 if (data.equipment_name) {
                     prNonTradeService.searchEquipments(data.equipment_name).then(res => {
                         const list = Array.isArray(res) ? res : res.results || [];
-                        const match = list.find(i => (i.name || i.code) === data.equipment_name || i.code === data.equipment_name);
+                        const match = list.find(i => String(i.code).trim() === String(data.equipment_name).trim() || (i.name && i.name.trim() === String(data.equipment_name).trim())) || list[0];
                         if (match) setEquipmentDesc(match.description || (match.plant ? `Plant: ${match.plant}` : '') || '');
                     }).catch(() => {});
                 }
@@ -266,8 +266,8 @@ export const PRNonTradeFormPage: React.FC = () => {
     const handleSelectMasterItem = (item: MasterItem) => {
         if (modalType === 'asset') {
             setAssetNo(item.code);
-            setAssetDesc(item.name || item.description || '');
-            toast.info(`Selected Asset: ${item.code} - ${item.name || item.description || ''}`);
+            setAssetDesc(item.description || item.name || item.category || '');
+            toast.info(`Selected Asset: ${item.code} - ${item.description || item.name || item.category || ''}`);
         } else if (modalType === 'wbs') {
             setWbsNo(item.code);
             setWbsDesc(item.description || item.name || '');
