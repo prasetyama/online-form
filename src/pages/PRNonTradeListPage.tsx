@@ -24,11 +24,12 @@ export const PRNonTradeListPage: React.FC = () => {
         submitted: number;
         approved: number;
         rejected: number;
+        revised: number;
     } | null>(null);
     const [loading, setLoading] = useState(true);
     const [searchQuery, setSearchQuery] = useState('');
     const [debouncedSearch, setDebouncedSearch] = useState('');
-    const [statusFilter, setStatusFilter] = useState<'ALL' | 'DRAFT' | 'IN_PROGRESS' | 'APPROVED' | 'REJECTED' | 'CANCELLED'>('ALL');
+    const [statusFilter, setStatusFilter] = useState<'ALL' | 'DRAFT' | 'IN_PROGRESS' | 'APPROVED' | 'REJECTED' | 'CANCELLED' | 'REVISED'>('ALL');
     const [currentPage, setCurrentPage] = useState(1);
     const [limit, setLimit] = useState<number>(10);
     const limitOptions = [10, 30, 50];
@@ -41,7 +42,7 @@ export const PRNonTradeListPage: React.FC = () => {
         return () => clearTimeout(timer);
     }, [searchQuery]);
 
-    const handleStatusFilterChange = (st: 'ALL' | 'DRAFT' | 'IN_PROGRESS' | 'APPROVED' | 'REJECTED' | 'CANCELLED') => {
+    const handleStatusFilterChange = (st: 'ALL' | 'DRAFT' | 'IN_PROGRESS' | 'APPROVED' | 'REJECTED' | 'CANCELLED' | 'REVISED') => {
         setStatusFilter(st);
         setCurrentPage(1);
     };
@@ -72,6 +73,7 @@ export const PRNonTradeListPage: React.FC = () => {
                         submitted: res.submitted_count ?? 0,
                         approved: res.approved_count ?? 0,
                         rejected: res.rejected_count ?? 0,
+                        revised: res.revised_count ?? 0,
                     });
                 }
             }
@@ -156,6 +158,7 @@ export const PRNonTradeListPage: React.FC = () => {
     const submittedCount = summaryCounts ? summaryCounts.submitted : items.filter(i => ['SUBMITTED', 'IN_PROGRESS', 'PENDING'].includes(i.status || '')).length;
     const approvedCount = summaryCounts ? summaryCounts.approved : items.filter(i => i.status === 'APPROVED').length;
     const rejectedCount = summaryCounts ? summaryCounts.rejected : items.filter(i => i.status === 'REJECTED').length;
+    const revisedCount = summaryCounts ? summaryCounts.revised : items.filter(i => i.status === 'REVISED').length;
 
     return (
         <div className="max-w-7xl mx-auto space-y-6">
@@ -200,7 +203,7 @@ export const PRNonTradeListPage: React.FC = () => {
             </div>
 
             {/* Metrics Quick Strip */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-4">
                 <div
                     onClick={() => handleStatusFilterChange('ALL')}
                     className={`p-4 rounded-2xl border cursor-pointer transition-all ${statusFilter === 'ALL'
@@ -241,6 +244,19 @@ export const PRNonTradeListPage: React.FC = () => {
                         <Clock size={18} className="text-indigo-600" />
                     </div>
                     <p className="text-2xl font-bold text-indigo-900 mt-2">{submittedCount}</p>
+                </div>
+                <div
+                    onClick={() => handleStatusFilterChange('REVISED')}
+                    className={`p-4 rounded-2xl border cursor-pointer transition-all ${statusFilter === 'REVISED'
+                        ? 'bg-yellow-50/70 border-yellow-300 ring-2 ring-yellow-500/20'
+                        : 'bg-white border-slate-200/80 hover:bg-slate-50/50'
+                        }`}
+                >
+                    <div className="flex items-center justify-between">
+                        <span className="text-sm font-semibold text-yellow-700 uppercase tracking-wider">Revised</span>
+                        <Clock size={18} className="text-yellow-600" />
+                    </div>
+                    <p className="text-2xl font-bold text-yellow-900 mt-2">{revisedCount}</p>
                 </div>
 
                 <div
@@ -287,7 +303,7 @@ export const PRNonTradeListPage: React.FC = () => {
 
                 <div className="flex items-center gap-2 w-full sm:w-auto justify-between sm:justify-end flex-wrap">
                     <div className="flex items-center gap-1.5 bg-slate-100 p-1 rounded-xl flex-wrap">
-                        {(['ALL', 'DRAFT', 'IN_PROGRESS', 'APPROVED', 'REJECTED'] as const).map((st) => (
+                        {(['ALL', 'DRAFT', 'IN_PROGRESS', 'APPROVED', 'REJECTED', 'REVISED'] as const).map((st) => (
                             <button
                                 key={st}
                                 onClick={() => handleStatusFilterChange(st)}
@@ -409,9 +425,9 @@ export const PRNonTradeListPage: React.FC = () => {
                                                     </span>
                                                 )}
                                                 {item.status === 'REVISED' && (
-                                                    <span className="px-2.5 py-1 rounded-full text-sm font-bold bg-amber-50 text-amber-800 border border-amber-200 inline-flex items-center gap-1">
+                                                    <span className="px-2.5 py-1 rounded-full text-sm font-bold bg-yellow-50 text-yellow-800 border border-yellow-200 inline-flex items-center gap-1">
                                                         <AlertCircle size={12} />
-                                                        REVISE
+                                                        REVISED
                                                     </span>
                                                 )}
                                                 {item.status === 'REJECTED' && (
