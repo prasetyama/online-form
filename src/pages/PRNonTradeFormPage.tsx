@@ -51,13 +51,17 @@ export const PRNonTradeFormPage: React.FC = () => {
     const [purchaseType, setPurchaseType] = useState<'asset' | 'non_asset'>('non_asset');
     const [carTbrNo, setCarTbrNo] = useState('');
     const [carTbrDesc, setCarTbrDesc] = useState('');
+    const [carTbrLocked, setCarTbrLocked] = useState(false);
     const [assetType, setAssetType] = useState<'non_wbs' | 'wbs' | ''>('');
     const [assetNo, setAssetNo] = useState('');
     const [assetDesc, setAssetDesc] = useState('');
+    const [assetLocked, setAssetLocked] = useState(false);
     const [wbsNo, setWbsNo] = useState('');
     const [wbsDesc, setWbsDesc] = useState('');
+    const [wbsLocked, setWbsLocked] = useState(false);
     const [equipmentName, setEquipmentName] = useState('');
     const [equipmentDesc, setEquipmentDesc] = useState('');
+    const [equipmentLocked, setEquipmentLocked] = useState(false);
     const [submissionRemark, setSubmissionRemark] = useState('');
 
     // Items list
@@ -65,6 +69,7 @@ export const PRNonTradeFormPage: React.FC = () => {
 
     // Item editing state
     const [editingItemIndex, setEditingItemIndex] = useState<number | null>(null);
+    const [goodsLocked, setGoodsLocked] = useState(false);
     const [itemForm, setItemForm] = useState<PRNonTradeItem>({
         goods_code: '',
         description: '',
@@ -112,30 +117,42 @@ export const PRNonTradeFormPage: React.FC = () => {
                 if (data.car_tbr_no) {
                     prNonTradeService.searchCarNumbers(data.car_tbr_no).then(res => {
                         const list = Array.isArray(res) ? res : res.results || [];
-                        const match = list.find(i => String(i.code).trim() === String(data.car_tbr_no).trim()) || list[0];
-                        if (match) setCarTbrDesc(match.description || match.name || '');
-                    }).catch(() => {});
+                        const match = list.find(i => String(i.code).trim() === String(data.car_tbr_no).trim());
+                        if (match) {
+                            setCarTbrDesc(match.description || match.name || '');
+                            setCarTbrLocked(true);
+                        }
+                    }).catch(() => { });
                 }
                 if (data.asset_no) {
                     prNonTradeService.searchAssets(data.asset_no).then(res => {
                         const list = Array.isArray(res) ? res : res.results || [];
-                        const match = list.find(i => String(i.code).trim() === String(data.asset_no).trim()) || list[0];
-                        if (match) setAssetDesc(match.description || match.name || match.category || '');
-                    }).catch(() => {});
+                        const match = list.find(i => String(i.code).trim() === String(data.asset_no).trim());
+                        if (match) {
+                            setAssetDesc(match.description || match.name || match.category || '');
+                            setAssetLocked(true);
+                        }
+                    }).catch(() => { });
                 }
                 if (data.wbs_no) {
                     prNonTradeService.searchWBS(data.wbs_no).then(res => {
                         const list = Array.isArray(res) ? res : res.results || [];
-                        const match = list.find(i => String(i.code).trim() === String(data.wbs_no).trim()) || list[0];
-                        if (match) setWbsDesc(match.description || match.name || '');
-                    }).catch(() => {});
+                        const match = list.find(i => String(i.code).trim() === String(data.wbs_no).trim());
+                        if (match) {
+                            setWbsDesc(match.description || match.name || '');
+                            setWbsLocked(true);
+                        }
+                    }).catch(() => { });
                 }
                 if (data.equipment_name) {
                     prNonTradeService.searchEquipments(data.equipment_name).then(res => {
                         const list = Array.isArray(res) ? res : res.results || [];
-                        const match = list.find(i => String(i.code).trim() === String(data.equipment_name).trim() || (i.name && i.name.trim() === String(data.equipment_name).trim())) || list[0];
-                        if (match) setEquipmentDesc(match.description || (match.plant ? `Plant: ${match.plant}` : '') || '');
-                    }).catch(() => {});
+                        const match = list.find(i => String(i.code).trim() === String(data.equipment_name).trim() || (i.name && i.name.trim() === String(data.equipment_name).trim()));
+                        if (match) {
+                            setEquipmentDesc(match.description || (match.plant ? `Plant: ${match.plant}` : '') || '');
+                            setEquipmentLocked(true);
+                        }
+                    }).catch(() => { });
                 }
             } catch (err: any) {
                 toast.error('Failed to load PR Non-Trade draft data.');
@@ -163,11 +180,21 @@ export const PRNonTradeFormPage: React.FC = () => {
             toast.info('Item added successfully.');
         }
         setItemForm({ goods_code: '', description: '', unit: 'PCS', quantity: 1, remark: '' });
+        setGoodsLocked(false);
     };
 
     const handleEditItem = (index: number) => {
+        const target = items[index];
         setEditingItemIndex(index);
-        setItemForm({ ...items[index] });
+        setItemForm({ ...target });
+        setGoodsLocked(false);
+        if (target.goods_code) {
+            prNonTradeService.searchGoods(target.goods_code).then(res => {
+                const list = Array.isArray(res) ? res : res.results || [];
+                const match = list.find(i => String(i.code).trim() === String(target.goods_code).trim());
+                if (match) setGoodsLocked(true);
+            }).catch(() => {});
+        }
     };
 
     const handleDeleteItem = (index: number) => {
@@ -176,6 +203,7 @@ export const PRNonTradeFormPage: React.FC = () => {
         if (editingItemIndex === index) {
             setEditingItemIndex(null);
             setItemForm({ goods_code: '', description: '', unit: 'PCS', quantity: 1, remark: '' });
+            setGoodsLocked(false);
         }
         toast.info('Item removed.');
     };
@@ -183,6 +211,7 @@ export const PRNonTradeFormPage: React.FC = () => {
     const handleCancelItemEdit = () => {
         setEditingItemIndex(null);
         setItemForm({ goods_code: '', description: '', unit: 'PCS', quantity: 1, remark: '' });
+        setGoodsLocked(false);
     };
 
     // Save as Draft handler
@@ -267,14 +296,17 @@ export const PRNonTradeFormPage: React.FC = () => {
         if (modalType === 'asset') {
             setAssetNo(item.code);
             setAssetDesc(item.description || item.name || item.category || '');
+            setAssetLocked(true);
             toast.info(`Selected Asset: ${item.code} - ${item.description || item.name || item.category || ''}`);
         } else if (modalType === 'wbs') {
             setWbsNo(item.code);
             setWbsDesc(item.description || item.name || '');
+            setWbsLocked(true);
             toast.info(`Selected WBS: ${item.code} - ${item.description || item.name || ''}`);
         } else if (modalType === 'equipment') {
             setEquipmentName(item.name || item.code);
             setEquipmentDesc(item.description || (item.plant ? `Plant: ${item.plant}` : '') || (item.code !== item.name ? item.code : '') || '');
+            setEquipmentLocked(true);
             toast.info(`Selected Equipment: ${item.name || item.code}`);
         } else if (modalType === 'goods') {
             setItemForm((prev) => ({
@@ -283,10 +315,12 @@ export const PRNonTradeFormPage: React.FC = () => {
                 description: item.description || item.name || '',
                 unit: item.unit || 'PCS'
             }));
+            setGoodsLocked(true);
             toast.info(`Selected Goods: ${item.code} - ${item.name || item.description || ''}`);
         } else if (modalType === 'car_number') {
             setCarTbrNo(item.code);
             setCarTbrDesc(item.description || item.name || '');
+            setCarTbrLocked(true);
             toast.info(`Selected CAR / TBR: ${item.code}${item.description ? ` - ${item.description}` : ''}`);
         }
     };
@@ -529,14 +563,30 @@ export const PRNonTradeFormPage: React.FC = () => {
                                     <input
                                         type="text"
                                         required
+                                        readOnly={carTbrLocked}
                                         placeholder="Search / enter CAR/TBR No..."
                                         value={carTbrNo}
                                         onChange={(e) => {
                                             setCarTbrNo(e.target.value);
-                                            if (!e.target.value) setCarTbrDesc('');
+                                            setCarTbrDesc('');
                                         }}
-                                        className="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-600 shadow-sm"
+                                        title={carTbrLocked ? 'Selected from Master Data. Click Clear (X) to edit or enter manually.' : undefined}
+                                        className={`w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-600 shadow-sm ${carTbrLocked ? 'bg-slate-100 text-slate-700 cursor-not-allowed' : 'bg-white'}`}
                                     />
+                                    {carTbrLocked && (
+                                        <button
+                                            type="button"
+                                            onClick={() => {
+                                                setCarTbrNo('');
+                                                setCarTbrDesc('');
+                                                setCarTbrLocked(false);
+                                            }}
+                                            className="px-3 py-2.5 bg-rose-50 text-rose-600 hover:bg-rose-100 border border-rose-200 rounded-xl transition-colors cursor-pointer shrink-0 flex items-center justify-center"
+                                            title="Clear selection to edit or enter manually"
+                                        >
+                                            <X size={16} />
+                                        </button>
+                                    )}
                                     <button
                                         type="button"
                                         onClick={() => setModalType('car_number')}
@@ -694,14 +744,30 @@ export const PRNonTradeFormPage: React.FC = () => {
                                                     <input
                                                         type="text"
                                                         required
+                                                        readOnly={assetLocked}
                                                         placeholder="Search / enter Asset No..."
                                                         value={assetNo}
                                                         onChange={(e) => {
                                                             setAssetNo(e.target.value);
-                                                            if (!e.target.value) setAssetDesc('');
+                                                            setAssetDesc('');
                                                         }}
-                                                        className="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-600 shadow-sm"
+                                                        title={assetLocked ? 'Selected from Master Data. Click Clear (X) to edit or enter manually.' : undefined}
+                                                        className={`w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-600 shadow-sm ${assetLocked ? 'bg-slate-100 text-slate-700 cursor-not-allowed' : 'bg-white'}`}
                                                     />
+                                                    {assetLocked && (
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => {
+                                                                setAssetNo('');
+                                                                setAssetDesc('');
+                                                                setAssetLocked(false);
+                                                            }}
+                                                            className="px-3 py-2.5 bg-rose-50 text-rose-600 hover:bg-rose-100 border border-rose-200 rounded-xl transition-colors cursor-pointer shrink-0 flex items-center justify-center"
+                                                            title="Clear selection to edit or enter manually"
+                                                        >
+                                                            <X size={16} />
+                                                        </button>
+                                                    )}
                                                     <button
                                                         type="button"
                                                         onClick={() => setModalType('asset')}
@@ -730,14 +796,30 @@ export const PRNonTradeFormPage: React.FC = () => {
                                                     <input
                                                         type="text"
                                                         required
+                                                        readOnly={wbsLocked}
                                                         placeholder="Search / enter WBS No..."
                                                         value={wbsNo}
                                                         onChange={(e) => {
                                                             setWbsNo(e.target.value);
-                                                            if (!e.target.value) setWbsDesc('');
+                                                            setWbsDesc('');
                                                         }}
-                                                        className="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-600 shadow-sm font-mono"
+                                                        title={wbsLocked ? 'Selected from Master Data. Click Clear (X) to edit or enter manually.' : undefined}
+                                                        className={`w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-600 shadow-sm font-mono ${wbsLocked ? 'bg-slate-100 text-slate-700 cursor-not-allowed' : 'bg-white'}`}
                                                     />
+                                                    {wbsLocked && (
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => {
+                                                                setWbsNo('');
+                                                                setWbsDesc('');
+                                                                setWbsLocked(false);
+                                                            }}
+                                                            className="px-3 py-2.5 bg-rose-50 text-rose-600 hover:bg-rose-100 border border-rose-200 rounded-xl transition-colors cursor-pointer shrink-0 flex items-center justify-center"
+                                                            title="Clear selection to edit or enter manually"
+                                                        >
+                                                            <X size={16} />
+                                                        </button>
+                                                    )}
                                                     <button
                                                         type="button"
                                                         onClick={() => setModalType('wbs')}
@@ -766,13 +848,29 @@ export const PRNonTradeFormPage: React.FC = () => {
                                                     type="text"
                                                     placeholder="Search / enter asset equipment name..."
                                                     required
+                                                    readOnly={equipmentLocked}
                                                     value={equipmentName}
                                                     onChange={(e) => {
                                                         setEquipmentName(e.target.value);
-                                                        if (!e.target.value) setEquipmentDesc('');
+                                                        setEquipmentDesc('');
                                                     }}
-                                                    className="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-600 shadow-sm"
+                                                    title={equipmentLocked ? 'Selected from Master Data. Click Clear (X) to edit or enter manually.' : undefined}
+                                                    className={`w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-600 shadow-sm ${equipmentLocked ? 'bg-slate-100 text-slate-700 cursor-not-allowed' : 'bg-white'}`}
                                                 />
+                                                {equipmentLocked && (
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => {
+                                                            setEquipmentName('');
+                                                            setEquipmentDesc('');
+                                                            setEquipmentLocked(false);
+                                                        }}
+                                                        className="px-3 py-2.5 bg-rose-50 text-rose-600 hover:bg-rose-100 border border-rose-200 rounded-xl transition-colors cursor-pointer shrink-0 flex items-center justify-center"
+                                                        title="Clear selection to edit or enter manually"
+                                                    >
+                                                        <X size={16} />
+                                                    </button>
+                                                )}
                                                 <button
                                                     type="button"
                                                     onClick={() => setModalType('equipment')}
@@ -799,19 +897,36 @@ export const PRNonTradeFormPage: React.FC = () => {
                                 {purchaseType === 'non_asset' && (
                                     <div>
                                         <label className="block text-sm font-semibold text-slate-700 mb-2">
-                                            Operational Equipment Name
+                                            Operational Equipment Name <span className="text-red-500">*</span>
                                         </label>
                                         <div className="flex gap-2">
                                             <input
                                                 type="text"
-                                                placeholder="Operational equipment name (optional)..."
+                                                placeholder="Operational equipment name"
+                                                required
+                                                readOnly={equipmentLocked}
                                                 value={equipmentName}
                                                 onChange={(e) => {
                                                     setEquipmentName(e.target.value);
-                                                    if (!e.target.value) setEquipmentDesc('');
+                                                    setEquipmentDesc('');
                                                 }}
-                                                className="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-600 shadow-sm"
+                                                title={equipmentLocked ? 'Selected from Master Data. Click Clear (X) to edit or enter manually.' : undefined}
+                                                className={`w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-600 shadow-sm ${equipmentLocked ? 'bg-slate-100 text-slate-700 cursor-not-allowed' : 'bg-white'}`}
                                             />
+                                            {equipmentLocked && (
+                                                <button
+                                                    type="button"
+                                                    onClick={() => {
+                                                        setEquipmentName('');
+                                                        setEquipmentDesc('');
+                                                        setEquipmentLocked(false);
+                                                    }}
+                                                    className="px-3 py-2.5 bg-rose-50 text-rose-600 hover:bg-rose-100 border border-rose-200 rounded-xl transition-colors cursor-pointer shrink-0 flex items-center justify-center"
+                                                    title="Clear selection to edit or enter manually"
+                                                >
+                                                    <X size={16} />
+                                                </button>
+                                            )}
                                             <button
                                                 type="button"
                                                 onClick={() => setModalType('equipment')}
@@ -863,11 +978,26 @@ export const PRNonTradeFormPage: React.FC = () => {
                                         <div className="flex gap-1.5">
                                             <input
                                                 type="text"
+                                                readOnly={goodsLocked}
                                                 placeholder="Goods code..."
                                                 value={itemForm.goods_code}
                                                 onChange={(e) => setItemForm({ ...itemForm, goods_code: e.target.value })}
-                                                className="w-full px-3.5 py-2 bg-white border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-600 shadow-sm"
+                                                title={goodsLocked ? 'Selected from Master Data. Click Clear (X) to edit or enter manually.' : undefined}
+                                                className={`w-full px-3.5 py-2 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-600 shadow-sm ${goodsLocked ? 'bg-slate-100 text-slate-700 cursor-not-allowed' : 'bg-white'}`}
                                             />
+                                            {goodsLocked && (
+                                                <button
+                                                    type="button"
+                                                    onClick={() => {
+                                                        setItemForm((prev) => ({ ...prev, goods_code: '', description: '', unit: 'PCS' }));
+                                                        setGoodsLocked(false);
+                                                    }}
+                                                    className="px-2.5 py-2 bg-rose-50 text-rose-600 hover:bg-rose-100 border border-rose-200 rounded-xl transition-colors cursor-pointer shrink-0 flex items-center justify-center"
+                                                    title="Clear selection to edit or enter manually"
+                                                >
+                                                    <X size={16} />
+                                                </button>
+                                            )}
                                             <button
                                                 type="button"
                                                 onClick={() => setModalType('goods')}
@@ -886,10 +1016,12 @@ export const PRNonTradeFormPage: React.FC = () => {
                                         </label>
                                         <input
                                             type="text"
+                                            readOnly={goodsLocked}
                                             placeholder="Goods name / description..."
                                             value={itemForm.description}
                                             onChange={(e) => setItemForm({ ...itemForm, description: e.target.value })}
-                                            className="w-full px-3.5 py-2 bg-white border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-600 shadow-sm"
+                                            title={goodsLocked ? 'Selected from Master Data. Click Clear (X) on Goods Code to edit.' : undefined}
+                                            className={`w-full px-3.5 py-2 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-600 shadow-sm ${goodsLocked ? 'bg-slate-100 text-slate-700 cursor-not-allowed' : 'bg-white'}`}
                                         />
                                     </div>
 
