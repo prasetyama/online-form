@@ -51,7 +51,7 @@ export const PRNonTradeFormPage: React.FC = () => {
     const [purchaseType, setPurchaseType] = useState<'asset' | 'non_asset'>('non_asset');
     const [carTbrNo, setCarTbrNo] = useState('');
     const [carTbrDesc, setCarTbrDesc] = useState('');
-    const [assetType, setAssetType] = useState<'non_wbs' | 'wbs'>('non_wbs');
+    const [assetType, setAssetType] = useState<'non_wbs' | 'wbs' | ''>('');
     const [assetNo, setAssetNo] = useState('');
     const [assetDesc, setAssetDesc] = useState('');
     const [wbsNo, setWbsNo] = useState('');
@@ -101,7 +101,7 @@ export const PRNonTradeFormPage: React.FC = () => {
                 setGoodsServiceType(data.goods_service_type || 'not_lumpsum');
                 setPurchaseType(data.purchase_type || 'non_asset');
                 setCarTbrNo(data.car_tbr_no || '');
-                setAssetType(data.asset_type || 'non_wbs');
+                setAssetType(data.purchase_type === 'asset' ? (data.asset_type || '') : '');
                 setAssetNo(data.asset_no || '');
                 setWbsNo(data.wbs_no || '');
                 setEquipmentName(data.equipment_name || '');
@@ -195,7 +195,7 @@ export const PRNonTradeFormPage: React.FC = () => {
                 goods_service_type: goodsServiceType,
                 purchase_type: purchaseType,
                 car_tbr_no: carTbrNo,
-                asset_type: purchaseType === 'asset' ? assetType : 'non_wbs',
+                asset_type: purchaseType === 'asset' ? assetType : '',
                 asset_no: purchaseType === 'asset' && assetType === 'non_wbs' ? assetNo : '',
                 wbs_no: purchaseType === 'asset' && assetType === 'wbs' ? wbsNo : '',
                 equipment_name: purchaseType === 'asset' ? equipmentName : equipmentName,
@@ -240,7 +240,7 @@ export const PRNonTradeFormPage: React.FC = () => {
                 goods_service_type: goodsServiceType,
                 purchase_type: purchaseType,
                 car_tbr_no: carTbrNo,
-                asset_type: purchaseType === 'asset' ? assetType : 'non_wbs',
+                asset_type: purchaseType === 'asset' ? assetType : '',
                 asset_no: purchaseType === 'asset' && assetType === 'non_wbs' ? assetNo : '',
                 wbs_no: purchaseType === 'asset' && assetType === 'wbs' ? wbsNo : '',
                 equipment_name: purchaseType === 'asset' ? equipmentName : equipmentName,
@@ -599,7 +599,10 @@ export const PRNonTradeFormPage: React.FC = () => {
                                                 name="purchaseType"
                                                 value="non_asset"
                                                 checked={purchaseType === 'non_asset'}
-                                                onChange={() => setPurchaseType('non_asset')}
+                                                onChange={() => {
+                                                    setPurchaseType('non_asset');
+                                                    setAssetType('');
+                                                }}
                                                 className="w-4 h-4 text-blue-600 focus:ring-blue-600 border-slate-300"
                                             />
                                             <div>
@@ -613,7 +616,10 @@ export const PRNonTradeFormPage: React.FC = () => {
                                                 required
                                                 value="asset"
                                                 checked={purchaseType === 'asset'}
-                                                onChange={() => setPurchaseType('asset')}
+                                                onChange={() => {
+                                                    setPurchaseType('asset');
+                                                    if (!assetType) setAssetType('non_wbs');
+                                                }}
                                                 className="w-4 h-4 text-blue-600 focus:ring-blue-600 border-slate-300"
                                             />
                                             <div>
