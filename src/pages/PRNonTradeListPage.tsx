@@ -356,7 +356,8 @@ export const PRNonTradeListPage: React.FC = () => {
                                         <th className="py-3.5 px-4 text-md">No</th>
                                         <th className="py-3.5 px-4">Transaction ID</th>
                                         <th className="py-3.5 px-4">Date</th>
-                                        <th className="py-3.5 px-4">Requestor</th>
+                                        <th className="py-3.5 px-4">Purchase Type</th>
+                                        <th className="py-3.5 px-4">Asset Type</th>
                                         <th className="py-3.5 px-4">Purpose</th>
                                         <th className="py-3.5 px-4 text-center">Status</th>
                                         <th className="py-3.5 px-4 text-center">Items</th>
@@ -390,10 +391,12 @@ export const PRNonTradeListPage: React.FC = () => {
                                             </td>
                                             <td className="py-3.5 px-4">
                                                 <div className="font-semibold text-slate-800 text-sm">
-                                                    {item.requestor_name || '-'}
+                                                    {item.purchase_type == 'asset' ? 'Asset' : 'Non Asset'}
                                                 </div>
-                                                <div className="text-sm text-slate-400 mt-0.5">
-                                                    {item.requester_department || item.requester_company}
+                                            </td>
+                                            <td className="py-3.5 px-4">
+                                                <div className="font-semibold text-slate-800 text-sm">
+                                                    {item.asset_type == 'non_wbs' ? 'Non WBS' : item.asset_type ? item.asset_type.toUpperCase() : '-'}
                                                 </div>
                                             </td>
                                             <td className="py-3.5 px-4 max-w-xs truncate text-slate-600 font-medium text-sm">

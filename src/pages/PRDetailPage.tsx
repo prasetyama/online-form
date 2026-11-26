@@ -17,6 +17,10 @@ export const PRDetailPage: React.FC = () => {
 
     const [pr, setPr] = useState<PRNonTradeData | null>(null);
     const [loading, setLoading] = useState(true);
+    const [carTbrDesc, setCarTbrDesc] = useState('');
+    const [assetDesc, setAssetDesc] = useState('');
+    const [wbsDesc, setWbsDesc] = useState('');
+    const [equipmentDesc, setEquipmentDesc] = useState('');
 
     useEffect(() => {
         if (!id) return;
@@ -25,6 +29,36 @@ export const PRDetailPage: React.FC = () => {
             try {
                 const data = await prNonTradeService.getDetail(id);
                 setPr(data);
+
+                // Auto-resolve descriptions for master data
+                if (data.car_tbr_no) {
+                    prNonTradeService.searchCarNumbers(data.car_tbr_no).then(res => {
+                        const list = Array.isArray(res) ? res : res.results || [];
+                        const match = list.find(i => String(i.code).trim() === String(data.car_tbr_no).trim()) || list[0];
+                        if (match) setCarTbrDesc(match.description || match.name || '');
+                    }).catch(() => { });
+                }
+                if (data.asset_no) {
+                    prNonTradeService.searchAssets(data.asset_no).then(res => {
+                        const list = Array.isArray(res) ? res : res.results || [];
+                        const match = list.find(i => String(i.code).trim() === String(data.asset_no).trim()) || list[0];
+                        if (match) setAssetDesc(match.description || match.name || match.category || '');
+                    }).catch(() => { });
+                }
+                if (data.wbs_no) {
+                    prNonTradeService.searchWBS(data.wbs_no).then(res => {
+                        const list = Array.isArray(res) ? res : res.results || [];
+                        const match = list.find(i => String(i.code).trim() === String(data.wbs_no).trim()) || list[0];
+                        if (match) setWbsDesc(match.description || match.name || '');
+                    }).catch(() => { });
+                }
+                if (data.equipment_name) {
+                    prNonTradeService.searchEquipments(data.equipment_name).then(res => {
+                        const list = Array.isArray(res) ? res : res.results || [];
+                        const match = list.find(i => String(i.code).trim() === String(data.equipment_name).trim() || (i.name && i.name.trim() === String(data.equipment_name).trim())) || list[0];
+                        if (match) setEquipmentDesc(match.description || (match.plant ? `Plant: ${match.plant}` : '') || '');
+                    }).catch(() => { });
+                }
             } catch (err: any) {
                 toast.error('Failed to load PR details.');
             } finally {
@@ -75,7 +109,8 @@ export const PRDetailPage: React.FC = () => {
                                     pr.status === 'IN_PROGRESS' ? 'bg-indigo-100 text-indigo-800 border border-indigo-200' :
                                         pr.status === 'SUBMITTED' ? 'bg-blue-100 text-blue-800 border border-blue-200' :
                                             pr.status === 'DRAFT' ? 'bg-amber-100 text-amber-800 border border-amber-200' :
-                                                'bg-slate-100 text-slate-700 border border-slate-200'
+                                                pr.status === 'REVISED' ? 'bg-yellow-50/70 border-yellow-300 ring-2 ring-yellow-500/20 text-yellow-700' :
+                                                    'bg-slate-100 text-slate-700 border border-slate-200'
                                 }`}>
                                 {pr.status || 'DRAFT'}
                             </span>
@@ -93,7 +128,7 @@ export const PRDetailPage: React.FC = () => {
                             className="flex items-center gap-2 px-4 py-2.5 bg-amber-600 hover:bg-amber-700 text-white rounded-xl text-sm font-semibold transition-colors cursor-pointer"
                         >
                             <Edit3 size={16} />
-                            <span>Edit / Revise Submission</span>
+                            <span>Edit / Revise</span>
                         </button>
                     ) : null}
                     {pr.approval_request && (
@@ -175,32 +210,53 @@ export const PRDetailPage: React.FC = () => {
                         <div>
                             <span className="text-sm font-semibold text-slate-400 block uppercase tracking-wider">CAR / TBR No</span>
                             <p className="font-medium text-sm text-slate-800 mt-1">{pr.car_tbr_no || '-'}</p>
+                            {carTbrDesc && (
+                                <div className="mt-1.5 flex items-center gap-1.5 text-xs bg-slate-50 border border-slate-200/80 px-2.5 py-1 rounded-lg text-slate-700">
+                                    <span className="font-semibold text-slate-800 truncate" title={carTbrDesc}>{carTbrDesc}</span>
+                                </div>
+                            )}
                         </div>
-
-                        {pr.purchase_type === 'asset' && (
-                            <>
-                                <div>
-                                    <span className="text-sm font-semibold text-slate-400 block uppercase tracking-wider">Asset Type</span>
-                                    <p className="font-semibold text-sm text-slate-800 mt-1 capitalize">{pr.asset_type === 'non_wbs' ? 'Non WBS' : 'WBS'}</p>
-                                </div>
-                                {pr.asset_type === 'non_wbs' && (
-                                    <div>
-                                        <span className="text-sm font-semibold text-slate-400 block uppercase tracking-wider">Asset No</span>
-                                        <p className="font-mono font-bold text-sm text-slate-800 mt-1">{pr.asset_no || '-'}</p>
+                        <div>
+                            <span className="text-sm font-semibold text-slate-400 block uppercase tracking-wider">Asset Type</span>
+                            <p className="font-semibold text-sm text-slate-800 mt-1 capitalize">
+                                {pr.asset_type === 'non_wbs' ? 'Non WBS' : pr.asset_type === 'wbs' ? 'WBS' : '-'}
+                            </p>
+                        </div>
+                        {pr.asset_type === 'non_wbs' && (
+                            <div>
+                                <span className="text-sm font-semibold text-slate-400 block uppercase tracking-wider">Asset No</span>
+                                <p className="font-mono font-bold text-sm text-slate-800 mt-1">{pr.asset_no || '-'}</p>
+                                {assetDesc && (
+                                    <div className="mt-1.5 flex items-center gap-1.5 text-xs bg-slate-50 border border-slate-200/80 px-2.5 py-1 rounded-lg text-slate-700">
+                                        <span className="font-semibold text-slate-800 truncate" title={assetDesc}>{assetDesc}</span>
                                     </div>
                                 )}
-                                {pr.asset_type === 'wbs' && (
-                                    <div>
-                                        <span className="text-sm font-semibold text-slate-400 block uppercase tracking-wider">WBS No</span>
-                                        <p className="font-mono font-bold text-sm text-slate-800 mt-1">{pr.wbs_no || '-'}</p>
-                                    </div>
-                                )}
-                                <div>
-                                    <span className="text-sm font-semibold text-slate-400 block uppercase tracking-wider">Equipment Name</span>
-                                    <p className="font-medium text-sm text-slate-800 mt-1">{pr.equipment_name || '-'}</p>
-                                </div>
-                            </>
+                            </div>
                         )}
+                        {pr.asset_type === 'wbs' && (
+                            <div>
+                                <span className="text-sm font-semibold text-slate-400 block uppercase tracking-wider">WBS No</span>
+                                <p className="font-mono font-bold text-sm text-slate-800 mt-1">{pr.wbs_no || '-'}</p>
+                                {wbsDesc && (
+                                    <div className="mt-1.5 flex items-center gap-1.5 text-xs bg-slate-50 border border-slate-200/80 px-2.5 py-1 rounded-lg text-slate-700">
+                                        <span className="font-semibold text-slate-800 truncate" title={wbsDesc}>{wbsDesc}</span>
+                                    </div>
+                                )}
+                            </div>
+                        )}
+                        <div>
+                            <span className="text-sm font-semibold text-slate-400 block uppercase tracking-wider">Equipment Name</span>
+                            <p className="font-medium text-sm text-slate-800 mt-1">{pr.equipment_name || '-'}</p>
+                            {equipmentDesc && (
+                                <div className="mt-1.5 flex items-center gap-1.5 text-xs bg-slate-50 border border-slate-200/80 px-2.5 py-1 rounded-lg text-slate-700">
+                                    <span className="font-semibold text-slate-800 truncate" title={equipmentDesc}>{equipmentDesc}</span>
+                                </div>
+                            )}
+                        </div>
+                        <div>
+                            <span className="text-sm font-semibold text-slate-400 block uppercase tracking-wider">Remark</span>
+                            <p className="font-medium text-sm text-slate-800 mt-1">{pr.submission_remark || '-'}</p>
+                        </div>
                     </div>
                 </div>
             </div>
