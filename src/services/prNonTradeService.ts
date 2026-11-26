@@ -63,6 +63,7 @@ export interface PRNonTradeListResponse {
     submitted_count?: number;
     approved_count?: number;
     rejected_count?: number;
+    revised_count?: number;
 }
 
 export const prNonTradeService = {
